@@ -1,0 +1,1541 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audit 5S - Portail Professionnel</title>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* === PAGE DE CONNEXION MODERNE === */
+        #loginPage {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        #loginPage::before {
+            content: '';
+            position: absolute;
+            width: 2000px;
+            height: 2000px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+            top: -1000px;
+            right: -500px;
+            transform: rotate(45deg);
+        }
+
+        #loginPage::after {
+            content: '';
+            position: absolute;
+            width: 2000px;
+            height: 2000px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+            bottom: -1000px;
+            left: -500px;
+            transform: rotate(45deg);
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 3rem;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            width: 420px;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-logo {
+            margin-bottom: 2rem;
+        }
+
+        .login-logo i {
+            font-size: 4rem;
+            background: linear-gradient(135deg, #d32f2f, #b71c1c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .login-container h2 {
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            font-size: 2rem;
+        }
+
+        .login-container p {
+            color: #64748b;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #334155;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .input-group label i {
+            color: #d32f2f;
+            margin-right: 0.5rem;
+            width: 20px;
+        }
+
+        .login-container input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .login-container input:focus {
+            border-color: #d32f2f;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(211, 47, 47, 0.1);
+        }
+
+        .login-container button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #d32f2f, #b71c1c);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 10px 20px -5px rgba(211, 47, 47, 0.3);
+        }
+
+        .login-container button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px -5px rgba(211, 47, 47, 0.4);
+        }
+
+        .login-container button i {
+            font-size: 1.1rem;
+        }
+
+        .login-footer {
+            margin-top: 2rem;
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+
+        .login-footer i {
+            color: #d32f2f;
+            margin: 0 4px;
+        }
+
+        .message {
+            margin-top: 1rem;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .success {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        /* === APPLICATION PRINCIPALE === */
+        #app {
+            display: none;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Bouton hamburger */
+        .menu-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: linear-gradient(135deg, #d32f2f, #b71c1c);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 18px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: none;
+            box-shadow: 0 4px 15px rgba(211, 47, 47, 0.3);
+            transition: all 0.3s;
+        }
+
+        .menu-toggle:hover {
+            transform: scale(1.05);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            color: #e2e8f0;
+            position: fixed;
+            height: 100%;
+            padding-top: 20px;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: #334155;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #d32f2f;
+            border-radius: 3px;
+        }
+
+        .sidebar.closed {
+            transform: translateX(-280px);
+        }
+
+        .sidebar-header {
+            text-align: center;
+            padding: 25px 20px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid rgba(211, 47, 47, 0.3);
+        }
+
+        .sidebar-header i {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #d32f2f, #ef5350);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .sidebar-header h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .sidebar-header p {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-top: 5px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0 15px;
+        }
+
+        .sidebar li {
+            padding: 15px 20px;
+            margin: 5px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            border-radius: 12px;
+            color: #cbd5e1;
+        }
+
+        .sidebar li i {
+            width: 25px;
+            margin-right: 12px;
+            font-size: 1.2rem;
+            color: #d32f2f;
+            transition: all 0.3s;
+        }
+
+        .sidebar li:hover {
+            background: rgba(211, 47, 47, 0.15);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .sidebar li:hover i {
+            color: white;
+        }
+
+        .sidebar li.active {
+            background: linear-gradient(90deg, #d32f2f, #b71c1c);
+            color: white;
+            box-shadow: 0 10px 20px -5px rgba(211, 47, 47, 0.3);
+        }
+
+        .sidebar li.active i {
+            color: white;
+        }
+
+        #menu-deconnexion {
+            margin-top: 30px;
+            border-top: 1px solid #334155;
+            color: #f87171;
+        }
+
+        #menu-deconnexion i {
+            color: #f87171;
+        }
+
+        /* Contenu principal */
+        .main-content {
+            margin-left: 280px;
+            padding: 30px;
+            height: 100%;
+            overflow-y: auto;
+            background-color: #f8fafc;
+            transition: margin-left 0.3s ease;
+        }
+
+        .main-content.expanded {
+            margin-left: 0;
+        }
+
+        /* Sections */
+        .section {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2 {
+            color: #1e293b;
+            margin-bottom: 30px;
+            font-weight: 700;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-left: 5px solid #d32f2f;
+            padding-left: 20px;
+        }
+
+        h2 i {
+            color: #d32f2f;
+            font-size: 2rem;
+        }
+
+        /* Formulaires */
+        .audit-form {
+            background: white;
+            padding: 35px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.1);
+            max-width: 550px;
+            margin-top: 20px;
+            border: 1px solid rgba(211, 47, 47, 0.1);
+        }
+
+        .audit-form h3 {
+            color: #1e293b;
+            margin-bottom: 25px;
+            font-size: 1.4rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 15px;
+            border-bottom: 2px dashed #e2e8f0;
+        }
+
+        .audit-form h3 i {
+            color: #d32f2f;
+            font-size: 1.6rem;
+        }
+
+        .audit-form input, .audit-form select {
+            width: 100%;
+            padding: 14px 18px;
+            margin: 10px 0;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: #f8fafc;
+        }
+
+        .audit-form input:focus, .audit-form select:focus {
+            border-color: #d32f2f;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(211, 47, 47, 0.1);
+            background: white;
+        }
+
+        /* Pourcentage avec slider */
+        .percentage-container {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 16px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .percentage-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .percentage-label span:first-child {
+            font-weight: 600;
+            color: #334155;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .percentage-label span:first-child i {
+            color: #d32f2f;
+        }
+
+        .percentage-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            padding: 5px 15px;
+            border-radius: 30px;
+            transition: all 0.3s;
+        }
+
+        /* Couleurs pour les pourcentages */
+        .percentage-value.high {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            box-shadow: 0 4px 10px rgba(34, 197, 94, 0.3);
+        }
+
+        .percentage-value.medium {
+            background: linear-gradient(135deg, #eab308, #ca8a04);
+            color: white;
+            box-shadow: 0 4px 10px rgba(234, 179, 8, 0.3);
+        }
+
+        .percentage-value.low {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
+        }
+
+        input[type=range] {
+            width: 100%;
+            height: 10px;
+            border-radius: 5px;
+            -webkit-appearance: none;
+            appearance: none;
+            outline: none;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #d32f2f;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            border: 3px solid white;
+            margin-top: -7px;
+        }
+
+        input[type=range]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #d32f2f;
+            cursor: pointer;
+            border: 3px solid white;
+        }
+
+        .audit-form button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #d32f2f, #b71c1c);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 10px 20px -5px rgba(211, 47, 47, 0.3);
+        }
+
+        .audit-form button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px -5px rgba(211, 47, 47, 0.4);
+        }
+
+        /* Dashboard cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stat-item {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: all 0.3s;
+            border: 1px solid rgba(211, 47, 47, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #d32f2f, #ef5350);
+        }
+
+        .stat-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px -12px rgba(211, 47, 47, 0.2);
+        }
+
+        .stat-item i {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #d32f2f, #ef5350);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+        }
+
+        .stat-item h4 {
+            color: #64748b;
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .stat-item .value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #1e293b;
+            line-height: 1.2;
+        }
+
+        .stat-item .sub-value {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-top: 5px;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            border: 1px solid rgba(211, 47, 47, 0.1);
+        }
+
+        .card h3 {
+            color: #1e293b;
+            margin-bottom: 25px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .card h3 i {
+            color: #d32f2f;
+            font-size: 1.4rem;
+        }
+
+        /* Tableaux */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.1);
+        }
+
+        th {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            color: white;
+            font-weight: 600;
+            padding: 18px 20px;
+            font-size: 0.95rem;
+        }
+
+        td {
+            padding: 15px 20px;
+            color: #334155;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: #f1f5f9;
+        }
+
+        /* Badges pour les pourcentages dans les tableaux */
+        .badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .badge.high {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge.medium {
+            background: #fef9c3;
+            color: #854d0e;
+        }
+
+        .badge.low {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Filtres */
+        .filter-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(211, 47, 47, 0.1);
+        }
+
+        .filter-bar input, .filter-bar select, .filter-bar button {
+            padding: 12px 18px;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            background: #f8fafc;
+            transition: all 0.3s;
+        }
+
+        .filter-bar input:focus, .filter-bar select:focus {
+            border-color: #d32f2f;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(211, 47, 47, 0.1);
+        }
+
+        .filter-bar button {
+            background: linear-gradient(135deg, #d32f2f, #b71c1c);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            box-shadow: 0 10px 20px -5px rgba(211, 47, 47, 0.3);
+        }
+
+        .filter-bar button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px -5px rgba(211, 47, 47, 0.4);
+        }
+
+        /* Moyennes par secteur */
+        .moyennes-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .moyenne-item {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 16px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+
+        .moyenne-item strong {
+            color: #1e293b;
+            font-size: 1rem;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .moyenne-item .value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+            .sidebar {
+                transform: translateX(-280px);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 80px 15px 15px 15px;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .login-container {
+                width: 90%;
+                margin: 0 15px;
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Bouton menu hamburger -->
+    <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+
+    <!-- PAGE DE CONNEXION AMÉLIORÉE -->
+    <div id="loginPage">
+        <div class="login-container">
+            <div class="login-logo">
+                <i class="fas fa-clipboard-check"></i>
+            </div>
+            <h2>Audit 5S Pro</h2>
+            <p>Connectez-vous pour accéder à votre espace d'audit</p>
+            
+            <form id="loginForm">
+                <div class="input-group">
+                    <label><i class="fas fa-envelope"></i> Email professionnel</label>
+                    <input type="email" id="email" placeholder="exemple@entreprise.com" required>
+                </div>
+                
+                <div class="input-group">
+                    <label><i class="fas fa-lock"></i> Mot de passe</label>
+                    <input type="password" id="password" placeholder="••••••••" required>
+                </div>
+                
+                <button type="submit">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Se connecter
+                </button>
+            </form>
+            
+            <div id="loginMessage" class="message"></div>
+            
+            <div class="login-footer">
+                <i class="fas fa-shield-alt"></i>
+                Audit 5S - Version Professionnelle
+            </div>
+        </div>
+    </div>
+
+    <!-- APPLICATION PRINCIPALE -->
+    <div id="app">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-clipboard-check"></i>
+                <h3>Audit 5S</h3>
+                <p>Tableau de bord professionnel</p>
+            </div>
+            <ul>
+                <li id="menu-dashboard" class="active">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard 5S</span>
+                </li>
+                <li id="menu-courbes">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Courbes & Tendances</span>
+                </li>
+                <li id="menu-auditLigne">
+                    <i class="fas fa-industry"></i>
+                    <span>Audit 5S Ligne</span>
+                </li>
+                <li id="menu-auditBureau">
+                    <i class="fas fa-building"></i>
+                    <span>Audit 5S Bureau</span>
+                </li>
+                <li id="menu-details">
+                    <i class="fas fa-list-alt"></i>
+                    <span>Détails d'audit</span>
+                </li>
+                <li id="menu-deconnexion">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Déconnexion</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Contenu principal -->
+        <div class="main-content" id="mainContent">
+            <!-- Dashboard -->
+            <div id="section-dashboard" class="section active">
+                <h2>
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard 5S
+                </h2>
+                <div class="stats-grid" id="dashboardStats"></div>
+                <div class="card">
+                    <h3>
+                        <i class="fas fa-calculator"></i>
+                        Moyennes par secteur
+                    </h3>
+                    <div id="moyennesSecteur" class="moyennes-list"></div>
+                </div>
+            </div>
+
+            <!-- Courbes -->
+            <div id="section-courbes" class="section">
+                <h2>
+                    <i class="fas fa-chart-line"></i>
+                    Courbes & Tendances
+                </h2>
+                <div class="filter-bar">
+                    <input type="week" id="filterWeek" placeholder="Semaine">
+                    <select id="filterUap">
+                        <option value="">Tous les UAP</option>
+                        <option value="UAP1">UAP1</option>
+                        <option value="UAP2">UAP2</option>
+                    </select>
+                    <input type="date" id="filterDate">
+                    <button id="applyFilters">
+                        <i class="fas fa-filter"></i>
+                        Appliquer
+                    </button>
+                </div>
+                <div class="card">
+                    <h3>
+                        <i class="fas fa-chart-area"></i>
+                        Évolution des moyennes
+                    </h3>
+                    <canvas id="chartMoyennes" width="400" height="200"></canvas>
+                </div>
+                <div class="card">
+                    <h3>
+                        <i class="fas fa-table"></i>
+                        Résultats par ligne
+                    </h3>
+                    <table id="resultatsLignes">
+                        <thead>
+                            <tr>
+                                <th>Ligne</th>
+                                <th>Moyenne</th>
+                                <th>Performance</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Audit 5S Ligne -->
+            <div id="section-auditLigne" class="section">
+                <h2>
+                    <i class="fas fa-industry"></i>
+                    Audit 5S Ligne
+                </h2>
+                <div class="audit-form">
+                    <h3>
+                        <i class="fas fa-industry"></i>
+                        Nouvel audit ligne
+                    </h3>
+                    <input type="date" id="ligneDate" required>
+                    <select id="ligneUap" required>
+                        <option value="">Sélectionnez l'UAP</option>
+                        <option value="UAP1">UAP1</option>
+                        <option value="UAP2">UAP2</option>
+                    </select>
+                    <input type="text" id="ligneNom" placeholder="Nom de la ligne" required>
+                    
+                    <div class="percentage-container">
+                        <div class="percentage-label">
+                            <span>
+                                <i class="fas fa-chart-pie"></i>
+                                Résultat
+                            </span>
+                            <span class="percentage-value" id="lignePercentageValue">50%</span>
+                        </div>
+                        <input type="range" id="ligneResultat" min="0" max="100" value="50" step="1">
+                    </div>
+                    
+                    <button id="submitLigne">
+                        <i class="fas fa-save"></i>
+                        Enregistrer l'audit
+                    </button>
+                </div>
+            </div>
+
+            <!-- Audit 5S Bureau -->
+            <div id="section-auditBureau" class="section">
+                <h2>
+                    <i class="fas fa-building"></i>
+                    Audit 5S Bureau
+                </h2>
+                <div class="audit-form">
+                    <h3>
+                        <i class="fas fa-building"></i>
+                        Nouvel audit bureau
+                    </h3>
+                    <input type="date" id="bureauDate" required>
+                    <input type="text" id="bureauService" placeholder="Département / Service" required>
+                    
+                    <div class="percentage-container">
+                        <div class="percentage-label">
+                            <span>
+                                <i class="fas fa-chart-pie"></i>
+                                Résultat
+                            </span>
+                            <span class="percentage-value" id="bureauPercentageValue">50%</span>
+                        </div>
+                        <input type="range" id="bureauResultat" min="0" max="100" value="50" step="1">
+                    </div>
+                    
+                    <button id="submitBureau">
+                        <i class="fas fa-save"></i>
+                        Enregistrer l'audit
+                    </button>
+                </div>
+            </div>
+
+            <!-- Détails d'audit -->
+            <div id="section-details" class="section">
+                <h2>
+                    <i class="fas fa-history"></i>
+                    Détails des audits
+                </h2>
+                <table id="auditsTable">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Secteur</th>
+                            <th>Résultat</th>
+                            <th>Performance</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/7.24.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.24.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.24.0/firebase-database.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configuration Firebase
+            const firebaseConfig = {
+                apiKey: "AIzaSyC_IXz4-i8yrkg0CD7CemASpR8B96RxNvg",
+                authDomain: "audit-5s-a6416.firebaseapp.com",
+                projectId: "audit-5s-a6416",
+                storageBucket: "audit-5s-a6416.firebasestorage.app",
+                messagingSenderId: "425777152763",
+                appId: "1:425777152763:web:82ca7ff8ef9bcf2906a65e",
+                measurementId: "G-JX8Q07CG6Z",
+                databaseURL: "https://audit-5s-a6416-default-rtdb.firebaseio.com"
+            };
+
+            firebase.initializeApp(firebaseConfig);
+            const auth = firebase.auth();
+            const db = firebase.database();
+
+            // Éléments DOM
+            const loginPage = document.getElementById('loginPage');
+            const appDiv = document.getElementById('app');
+            const loginForm = document.getElementById('loginForm');
+            const loginMessage = document.getElementById('loginMessage');
+            const menuToggle = document.getElementById('menuToggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+
+            // Fonction pour mettre à jour la couleur du pourcentage
+            function updatePercentageColor(element, value) {
+                element.classList.remove('high', 'medium', 'low');
+                if (value >= 85) {
+                    element.classList.add('high');
+                } else if (value >= 60) {
+                    element.classList.add('medium');
+                } else {
+                    element.classList.add('low');
+                }
+            }
+
+            // Mise à jour en temps réel des pourcentages
+            const ligneRange = document.getElementById('ligneResultat');
+            const bureauRange = document.getElementById('bureauResultat');
+            const lignePercent = document.getElementById('lignePercentageValue');
+            const bureauPercent = document.getElementById('bureauPercentageValue');
+
+            if (ligneRange) {
+                ligneRange.addEventListener('input', function() {
+                    const value = parseInt(this.value);
+                    lignePercent.textContent = value + '%';
+                    updatePercentageColor(lignePercent, value);
+                    
+                    // Mettre à jour la couleur de fond du slider
+                    const percent = value;
+                    const gradient = `linear-gradient(90deg, 
+                        ${percent >= 85 ? '#22c55e' : (percent >= 60 ? '#eab308' : '#ef4444')} 0%, 
+                        ${percent >= 85 ? '#16a34a' : (percent >= 60 ? '#ca8a04' : '#dc2626')} ${percent}%, 
+                        #e2e8f0 ${percent}%, 
+                        #e2e8f0 100%)`;
+                    this.style.background = gradient;
+                });
+                
+                // Initialisation
+                ligneRange.dispatchEvent(new Event('input'));
+            }
+
+            if (bureauRange) {
+                bureauRange.addEventListener('input', function() {
+                    const value = parseInt(this.value);
+                    bureauPercent.textContent = value + '%';
+                    updatePercentageColor(bureauPercent, value);
+                    
+                    const percent = value;
+                    const gradient = `linear-gradient(90deg, 
+                        ${percent >= 85 ? '#22c55e' : (percent >= 60 ? '#eab308' : '#ef4444')} 0%, 
+                        ${percent >= 85 ? '#16a34a' : (percent >= 60 ? '#ca8a04' : '#dc2626')} ${percent}%, 
+                        #e2e8f0 ${percent}%, 
+                        #e2e8f0 100%)`;
+                    this.style.background = gradient;
+                });
+                
+                bureauRange.dispatchEvent(new Event('input'));
+            }
+
+            // Toggle sidebar
+            menuToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
+                sidebar.classList.toggle('closed');
+                mainContent.classList.toggle('expanded');
+            });
+
+            // Fermer sidebar sur mobile après clic
+            const menuItemsList = document.querySelectorAll('.sidebar li');
+            menuItemsList.forEach(item => {
+                item.addEventListener('click', () => {
+                    if (window.innerWidth <= 768) {
+                        sidebar.classList.remove('open');
+                        sidebar.classList.add('closed');
+                        mainContent.classList.add('expanded');
+                    }
+                });
+            });
+
+            // Gestion connexion
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                loginMessage.textContent = 'Connexion en cours...';
+                loginMessage.className = 'message';
+                
+                auth.signInWithEmailAndPassword(email, password)
+                    .then(() => {
+                        loginMessage.textContent = '';
+                    })
+                    .catch(error => {
+                        loginMessage.textContent = '❌ ' + error.message;
+                        loginMessage.classList.add('error');
+                    });
+            });
+
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    loginPage.style.display = 'none';
+                    appDiv.style.display = 'block';
+                    loadAllData();
+                } else {
+                    loginPage.style.display = 'flex';
+                    appDiv.style.display = 'none';
+                }
+            });
+
+            // Navigation sidebar
+            const menuItems = {
+                dashboard: document.getElementById('menu-dashboard'),
+                courbes: document.getElementById('menu-courbes'),
+                auditLigne: document.getElementById('menu-auditLigne'),
+                auditBureau: document.getElementById('menu-auditBureau'),
+                details: document.getElementById('menu-details')
+            };
+            const sections = {
+                dashboard: document.getElementById('section-dashboard'),
+                courbes: document.getElementById('section-courbes'),
+                auditLigne: document.getElementById('section-auditLigne'),
+                auditBureau: document.getElementById('section-auditBureau'),
+                details: document.getElementById('section-details')
+            };
+
+            function setActiveMenu(activeId) {
+                Object.keys(menuItems).forEach(key => {
+                    if (menuItems[key]) menuItems[key].classList.remove('active');
+                });
+                const activeMenu = document.getElementById(`menu-${activeId}`);
+                if (activeMenu) activeMenu.classList.add('active');
+
+                Object.keys(sections).forEach(key => {
+                    if (sections[key]) sections[key].classList.remove('active');
+                });
+                const activeSection = document.getElementById(`section-${activeId}`);
+                if (activeSection) activeSection.classList.add('active');
+            }
+
+            menuItems.dashboard.addEventListener('click', () => setActiveMenu('dashboard'));
+            menuItems.courbes.addEventListener('click', () => setActiveMenu('courbes'));
+            menuItems.auditLigne.addEventListener('click', () => setActiveMenu('auditLigne'));
+            menuItems.auditBureau.addEventListener('click', () => setActiveMenu('auditBureau'));
+            menuItems.details.addEventListener('click', () => setActiveMenu('details'));
+            document.getElementById('menu-deconnexion').addEventListener('click', () => auth.signOut());
+
+            // Fonction pour charger toutes les données
+            function loadAllData() {
+                const auditsRef = db.ref('audits');
+                auditsRef.on('value', (snapshot) => {
+                    const data = snapshot.val();
+                    const audits = [];
+                    for (let key in data) {
+                        audits.push({ id: key, ...data[key] });
+                    }
+                    updateDashboard(audits);
+                    updateCourbes(audits);
+                    updateDetails(audits);
+                }, (error) => {
+                    console.error('Erreur de lecture RTDB:', error);
+                });
+            }
+
+            // Soumission formulaire ligne
+            document.getElementById('submitLigne').addEventListener('click', async () => {
+                const date = document.getElementById('ligneDate').value;
+                const uap = document.getElementById('ligneUap').value;
+                const ligne = document.getElementById('ligneNom').value.trim();
+                const resultat = parseInt(document.getElementById('ligneResultat').value);
+                
+                if (!date || !uap || !ligne || isNaN(resultat)) {
+                    alert('Veuillez remplir tous les champs');
+                    return;
+                }
+                
+                try {
+                    const newAudit = {
+                        type: 'ligne',
+                        date: date,
+                        uap: uap,
+                        secteur: ligne,
+                        resultat: resultat,
+                        timestamp: firebase.database.ServerValue.TIMESTAMP
+                    };
+                    await db.ref('audits').push(newAudit);
+                    
+                    // Animation de succès
+                    const btn = document.getElementById('submitLigne');
+                    btn.innerHTML = '<i class="fas fa-check"></i> Audit enregistré !';
+                    btn.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
+                    
+                    setTimeout(() => {
+                        btn.innerHTML = '<i class="fas fa-save"></i> Enregistrer l\'audit';
+                        btn.style.background = 'linear-gradient(135deg, #d32f2f, #b71c1c)';
+                    }, 2000);
+                    
+                    // Réinitialiser le formulaire
+                    document.getElementById('ligneDate').value = '';
+                    document.getElementById('ligneUap').value = '';
+                    document.getElementById('ligneNom').value = '';
+                    document.getElementById('ligneResultat').value = 50;
+                    ligneRange.dispatchEvent(new Event('input'));
+                    
+                } catch (error) {
+                    alert('Erreur: ' + error.message);
+                }
+            });
+
+            // Soumission formulaire bureau
+            document.getElementById('submitBureau').addEventListener('click', async () => {
+                const date = document.getElementById('bureauDate').value;
+                const service = document.getElementById('bureauService').value.trim();
+                const resultat = parseInt(document.getElementById('bureauResultat').value);
+                
+                if (!date || !service || isNaN(resultat)) {
+                    alert('Veuillez remplir tous les champs');
+                    return;
+                }
+                
+                try {
+                    const newAudit = {
+                        type: 'bureau',
+                        date: date,
+                        secteur: service,
+                        resultat: resultat,
+                        timestamp: firebase.database.ServerValue.TIMESTAMP
+                    };
+                    await db.ref('audits').push(newAudit);
+                    
+                    // Animation de succès
+                    const btn = document.getElementById('submitBureau');
+                    btn.innerHTML = '<i class="fas fa-check"></i> Audit enregistré !';
+                    btn.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
+                    
+                    setTimeout(() => {
+                        btn.innerHTML = '<i class="fas fa-save"></i> Enregistrer l\'audit';
+                        btn.style.background = 'linear-gradient(135deg, #d32f2f, #b71c1c)';
+                    }, 2000);
+                    
+                    // Réinitialiser le formulaire
+                    document.getElementById('bureauDate').value = '';
+                    document.getElementById('bureauService').value = '';
+                    document.getElementById('bureauResultat').value = 50;
+                    bureauRange.dispatchEvent(new Event('input'));
+                    
+                } catch (error) {
+                    alert('Erreur: ' + error.message);
+                }
+            });
+
+            // Fonctions de mise à jour
+            function getPerformanceClass(score) {
+                if (score >= 85) return 'high';
+                if (score >= 60) return 'medium';
+                return 'low';
+            }
+
+            function getPerformanceLabel(score) {
+                if (score >= 85) return 'Excellent';
+                if (score >= 70) return 'Bon';
+                if (score >= 60) return 'Moyen';
+                if (score >= 40) return 'Faible';
+                return 'Critique';
+            }
+
+            function updateDashboard(audits) {
+                const nbAudits = audits.length;
+                const ligneAudits = audits.filter(a => a.type === 'ligne');
+                const bureauAudits = audits.filter(a => a.type === 'bureau');
+
+                let bestLigne = { score: -1, secteur: '' };
+                let worstLigne = { score: 101, secteur: '' };
+                ligneAudits.forEach(a => {
+                    if (a.resultat > bestLigne.score) bestLigne = { score: a.resultat, secteur: a.secteur };
+                    if (a.resultat < worstLigne.score) worstLigne = { score: a.resultat, secteur: a.secteur };
+                });
+
+                let bestBureau = { score: -1, secteur: '' };
+                let worstBureau = { score: 101, secteur: '' };
+                bureauAudits.forEach(a => {
+                    if (a.resultat > bestBureau.score) bestBureau = { score: a.resultat, secteur: a.secteur };
+                    if (a.resultat < worstBureau.score) worstBureau = { score: a.resultat, secteur: a.secteur };
+                });
+
+                const moyLigneUAP1 = moyenne(audits.filter(a => a.type === 'ligne' && a.uap === 'UAP1'));
+                const moyLigneUAP2 = moyenne(audits.filter(a => a.type === 'ligne' && a.uap === 'UAP2'));
+                const moyUsine = moyenne(ligneAudits);
+                const moyBureaux = moyenne(bureauAudits);
+
+                document.getElementById('dashboardStats').innerHTML = `
+                    <div class="stat-item">
+                        <i class="fas fa-chart-bar"></i>
+                        <h4>Audits réalisés</h4>
+                        <div class="value">${nbAudits}</div>
+                        <div class="sub-value">au total</div>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-trophy"></i>
+                        <h4>Meilleur score ligne</h4>
+                        <div class="value">${bestLigne.score}%</div>
+                        <div class="sub-value">${bestLigne.secteur}</div>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h4>Pire score ligne</h4>
+                        <div class="value">${worstLigne.score}%</div>
+                        <div class="sub-value">${worstLigne.secteur}</div>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-building"></i>
+                        <h4>Meilleur score bureau</h4>
+                        <div class="value">${bestBureau.score}%</div>
+                        <div class="sub-value">${bestBureau.secteur}</div>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-building"></i>
+                        <h4>Pire score bureau</h4>
+                        <div class="value">${worstBureau.score}%</div>
+                        <div class="sub-value">${worstBureau.secteur}</div>
+                    </div>
+                `;
+
+                document.getElementById('moyennesSecteur').innerHTML = `
+                    <div class="moyenne-item">
+                        <strong>UAP1</strong>
+                        <div class="value ${getPerformanceClass(moyLigneUAP1)}">${moyLigneUAP1.toFixed(1)}%</div>
+                    </div>
+                    <div class="moyenne-item">
+                        <strong>UAP2</strong>
+                        <div class="value ${getPerformanceClass(moyLigneUAP2)}">${moyLigneUAP2.toFixed(1)}%</div>
+                    </div>
+                    <div class="moyenne-item">
+                        <strong>Usine</strong>
+                        <div class="value ${getPerformanceClass(moyUsine)}">${moyUsine.toFixed(1)}%</div>
+                    </div>
+                    <div class="moyenne-item">
+                        <strong>Bureaux</strong>
+                        <div class="value ${getPerformanceClass(moyBureaux)}">${moyBureaux.toFixed(1)}%</div>
+                    </div>
+                `;
+            }
+
+            function moyenne(arr) {
+                if (arr.length === 0) return 0;
+                const sum = arr.reduce((acc, a) => acc + a.resultat, 0);
+                return sum / arr.length;
+            }
+
+            let chartInstance = null;
+            function updateCourbes(audits) {
+                const mois = {};
+
+                audits.forEach(a => {
+                    if (!a.date) return;
+                    const d = new Date(a.date);
+                    const moisKey = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+                    if (!mois[moisKey]) mois[moisKey] = { uap1: [], uap2: [], usine: [] };
+                    if (a.type === 'ligne') {
+                        if (a.uap === 'UAP1') mois[moisKey].uap1.push(a.resultat);
+                        if (a.uap === 'UAP2') mois[moisKey].uap2.push(a.resultat);
+                        mois[moisKey].usine.push(a.resultat);
+                    }
+                });
+
+                const labels = Object.keys(mois).sort();
+                const dataUAP1 = labels.map(m => moyenne(mois[m].uap1));
+                const dataUAP2 = labels.map(m => moyenne(mois[m].uap2));
+                const dataUsine = labels.map(m => moyenne(mois[m].usine));
+
+                const ctx = document.getElementById('chartMoyennes').getContext('2d');
+                if (chartInstance) chartInstance.destroy();
+                chartInstance = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            { 
+                                label: 'Moyenne UAP1', 
+                                data: dataUAP1, 
+                                borderColor: '#d32f2f', 
+                                backgroundColor: 'rgba(211,47,47,0.1)', 
+                                tension: 0.4,
+                                borderWidth: 3,
+                                pointBackgroundColor: '#d32f2f'
+                            },
+                            { 
+                                label: 'Moyenne UAP2', 
+                                data: dataUAP2, 
+                                borderColor: '#2c3e50', 
+                                backgroundColor: 'rgba(44,62,80,0.1)', 
+                                tension: 0.4,
+                                borderWidth: 3,
+                                pointBackgroundColor: '#2c3e50'
+                            },
+                            { 
+                                label: 'Moyenne Usine', 
+                                data: dataUsine, 
+                                borderColor: '#22c55e', 
+                                backgroundColor: 'rgba(34,197,94,0.1)', 
+                                tension: 0.4,
+                                borderWidth: 3,
+                                pointBackgroundColor: '#22c55e'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: { 
+                            legend: { 
+                                position: 'bottom',
+                                labels: {
+                                    usePointStyle: true,
+                                    padding: 20
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return context.dataset.label + ': ' + context.raw.toFixed(1) + '%';
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                grid: {
+                                    color: 'rgba(0,0,0,0.05)'
+                                },
+                                ticks: {
+                                    callback: function(value) {
+                                        return value + '%';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+
+                const lignes = {};
+                audits.filter(a => a.type === 'ligne').forEach(a => {
+                    if (!lignes[a.secteur]) lignes[a.secteur] = [];
+                    lignes[a.secteur].push(a.resultat);
+                });
+                
+                let tbody = '';
+                for (let ligne in lignes) {
+                    const moy = moyenne(lignes[ligne]);
+                    const perfClass = getPerformanceClass(moy);
+                    tbody += `<tr>
+                        <td>${ligne}</td>
+                        <td>${moy.toFixed(1)}%</td>
+                        <td><span class="badge ${perfClass}">${getPerformanceLabel(moy)}</span></td>
+                    </tr>`;
+                }
+                document.querySelector('#resultatsLignes tbody').innerHTML = tbody || '<tr><td colspan="3" style="text-align:center">Aucune donnée disponible</td></tr>';
+            }
+
+            function updateDetails(audits) {
+                audits.sort((a, b) => new Date(b.date) - new Date(a.date));
+                let tbody = '';
+                audits.forEach(a => {
+                    const date = a.date ? new Date(a.date).toLocaleDateString('fr-FR') : '';
+                    const type = a.type === 'ligne' ? 'Ligne' : 'Bureau';
+                    const secteur = a.secteur + (a.uap ? ` (${a.uap})` : '');
+                    const perfClass = getPerformanceClass(a.resultat);
+                    tbody += `<tr>
+                        <td>${date}</td>
+                        <td>${type}</td>
+                        <td>${secteur}</td>
+                        <td>${a.resultat}%</td>
+                        <td><span class="badge ${perfClass}">${getPerformanceLabel(a.resultat)}</span></td>
+                    </tr>`;
+                });
+                document.querySelector('#auditsTable tbody').innerHTML = tbody || '<tr><td colspan="5" style="text-align:center">Aucun audit enregistré</td></tr>';
+            }
+
+            // Filtres
+            document.getElementById('applyFilters').addEventListener('click', () => {
+                loadAllData();
+            });
+        });
+    </script>
+</body>
+</html>
