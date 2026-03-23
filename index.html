@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- SheetJS pour export Excel -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -388,14 +390,36 @@
             font-size: 1.8rem;
             display: flex;
             align-items: center;
+            justify-content: space-between;
             gap: 12px;
             border-left: 5px solid #d32f2f;
             padding-left: 20px;
+            flex-wrap: wrap;
         }
 
         h2 i {
             color: #d32f2f;
             font-size: 2rem;
+        }
+
+        .btn-excel {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .btn-excel:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.3);
         }
 
         /* Formulaires */
@@ -519,15 +543,6 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
             border: 3px solid white;
             margin-top: -7px;
-        }
-
-        input[type=range]::-moz-range-thumb {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: #d32f2f;
-            cursor: pointer;
-            border: 3px solid white;
         }
 
         .audit-form button {
@@ -699,7 +714,7 @@
             color: #991b1b;
         }
 
-        /* Filtres */
+        /* Filtres améliorés */
         .filter-bar {
             display: flex;
             gap: 15px;
@@ -710,15 +725,29 @@
             border-radius: 20px;
             box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.1);
             border: 1px solid rgba(211, 47, 47, 0.1);
+            align-items: flex-end;
         }
 
-        .filter-bar input, .filter-bar select, .filter-bar button {
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .filter-group label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #64748b;
+        }
+
+        .filter-bar input, .filter-bar select {
             padding: 12px 18px;
             border: 2px solid #e2e8f0;
             border-radius: 14px;
             font-size: 0.95rem;
             background: #f8fafc;
             transition: all 0.3s;
+            min-width: 160px;
         }
 
         .filter-bar input:focus, .filter-bar select:focus {
@@ -728,20 +757,28 @@
         }
 
         .filter-bar button {
+            padding: 12px 24px;
             background: linear-gradient(135deg, #d32f2f, #b71c1c);
             color: white;
             border: none;
+            border-radius: 14px;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 8px;
-            font-weight: 500;
+            font-weight: 600;
             box-shadow: 0 10px 20px -5px rgba(211, 47, 47, 0.3);
+            transition: all 0.3s;
         }
 
         .filter-bar button:hover {
             transform: translateY(-2px);
             box-shadow: 0 15px 30px -5px rgba(211, 47, 47, 0.4);
+        }
+
+        /* Graphique en barres */
+        .bar-chart-container {
+            margin-top: 20px;
         }
 
         /* Moyennes par secteur */
@@ -771,6 +808,20 @@
             font-weight: 700;
         }
 
+        /* Graphiques côte à côte */
+        .charts-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .charts-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .menu-toggle {
@@ -794,6 +845,13 @@
                 margin: 0 15px;
                 padding: 2rem;
             }
+            .filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .filter-group {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -801,7 +859,7 @@
     <!-- Bouton menu hamburger -->
     <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
 
-    <!-- PAGE DE CONNEXION AMÉLIORÉE -->
+    <!-- PAGE DE CONNEXION -->
     <div id="loginPage">
         <div class="login-container">
             <div class="login-logo">
@@ -891,42 +949,87 @@
                 </div>
             </div>
 
-            <!-- Courbes -->
+            <!-- Courbes & Tendances avec graphiques améliorés -->
             <div id="section-courbes" class="section">
                 <h2>
                     <i class="fas fa-chart-line"></i>
                     Courbes & Tendances
+                    <button id="exportCourbesBtn" class="btn-excel"><i class="fas fa-file-excel"></i> Exporter les données</button>
                 </h2>
+                
+                <!-- Filtres améliorés -->
                 <div class="filter-bar">
-                    <input type="week" id="filterWeek" placeholder="Semaine">
-                    <select id="filterUap">
-                        <option value="">Tous les UAP</option>
-                        <option value="UAP1">UAP1</option>
-                        <option value="UAP2">UAP2</option>
-                    </select>
-                    <input type="date" id="filterDate">
+                    <div class="filter-group">
+                        <label><i class="fas fa-calendar"></i> Période</label>
+                        <select id="filterPeriod">
+                            <option value="month">Par Mois</option>
+                            <option value="week">Par Semaine</option>
+                            <option value="day">Par Jour</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label><i class="fas fa-calendar-week"></i> Semaine</label>
+                        <input type="week" id="filterWeek" placeholder="Semaine">
+                    </div>
+                    <div class="filter-group">
+                        <label><i class="fas fa-calendar-day"></i> Date</label>
+                        <input type="date" id="filterDate">
+                    </div>
+                    <div class="filter-group">
+                        <label><i class="fas fa-filter"></i> UAP</label>
+                        <select id="filterUap">
+                            <option value="">Tous les UAP</option>
+                            <option value="UAP1">UAP1</option>
+                            <option value="UAP2">UAP2</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label><i class="fas fa-industry"></i> Ligne</label>
+                        <select id="filterLigne">
+                            <option value="">Toutes les lignes</option>
+                        </select>
+                    </div>
                     <button id="applyFilters">
                         <i class="fas fa-filter"></i>
                         Appliquer
                     </button>
+                    <button id="resetFilters">
+                        <i class="fas fa-undo"></i>
+                        Réinitialiser
+                    </button>
                 </div>
-                <div class="card">
-                    <h3>
-                        <i class="fas fa-chart-area"></i>
-                        Évolution des moyennes
-                    </h3>
-                    <canvas id="chartMoyennes" width="400" height="200"></canvas>
+                
+                <!-- Graphiques côte à côte -->
+                <div class="charts-row">
+                    <div class="card">
+                        <h3>
+                            <i class="fas fa-chart-line"></i>
+                            Évolution UAP1 vs UAP2
+                        </h3>
+                        <canvas id="chartMoyennes" height="300"></canvas>
+                    </div>
+                    <div class="card">
+                        <h3>
+                            <i class="fas fa-chart-bar"></i>
+                            Performance par ligne (dernier audit)
+                        </h3>
+                        <canvas id="chartBarresLignes" height="300"></canvas>
+                    </div>
                 </div>
+                
                 <div class="card">
                     <h3>
                         <i class="fas fa-table"></i>
-                        Résultats par ligne
+                        Résultats détaillés par ligne
                     </h3>
                     <table id="resultatsLignes">
                         <thead>
                             <tr>
                                 <th>Ligne</th>
+                                <th>UAP</th>
                                 <th>Moyenne</th>
+                                <th>Dernier score</th>
+                                <th>Évolution</th>
                                 <th>Performance</th>
                             </tr>
                         </thead>
@@ -1004,11 +1107,12 @@
                 </div>
             </div>
 
-            <!-- Détails d'audit -->
+            <!-- Détails d'audit avec export -->
             <div id="section-details" class="section">
                 <h2>
                     <i class="fas fa-history"></i>
                     Détails des audits
+                    <button id="exportDetailsBtn" class="btn-excel"><i class="fas fa-file-excel"></i> Exporter Excel</button>
                 </h2>
                 <table id="auditsTable">
                     <thead>
@@ -1016,6 +1120,7 @@
                             <th>Date</th>
                             <th>Type</th>
                             <th>Secteur</th>
+                            <th>UAP</th>
                             <th>Résultat</th>
                             <th>Performance</th>
                         </tr>
@@ -1058,7 +1163,16 @@
             const sidebar = document.getElementById('sidebar');
             const mainContent = document.getElementById('mainContent');
 
-            // Fonction pour mettre à jour la couleur du pourcentage
+            let allAudits = [];
+            let chartInstance = null;
+            let barChartInstance = null;
+
+            // Mise à jour en temps réel des pourcentages
+            const ligneRange = document.getElementById('ligneResultat');
+            const bureauRange = document.getElementById('bureauResultat');
+            const lignePercent = document.getElementById('lignePercentageValue');
+            const bureauPercent = document.getElementById('bureauPercentageValue');
+
             function updatePercentageColor(element, value) {
                 element.classList.remove('high', 'medium', 'low');
                 if (value >= 85) {
@@ -1070,29 +1184,14 @@
                 }
             }
 
-            // Mise à jour en temps réel des pourcentages
-            const ligneRange = document.getElementById('ligneResultat');
-            const bureauRange = document.getElementById('bureauResultat');
-            const lignePercent = document.getElementById('lignePercentageValue');
-            const bureauPercent = document.getElementById('bureauPercentageValue');
-
             if (ligneRange) {
                 ligneRange.addEventListener('input', function() {
                     const value = parseInt(this.value);
                     lignePercent.textContent = value + '%';
                     updatePercentageColor(lignePercent, value);
-                    
-                    // Mettre à jour la couleur de fond du slider
-                    const percent = value;
-                    const gradient = `linear-gradient(90deg, 
-                        ${percent >= 85 ? '#22c55e' : (percent >= 60 ? '#eab308' : '#ef4444')} 0%, 
-                        ${percent >= 85 ? '#16a34a' : (percent >= 60 ? '#ca8a04' : '#dc2626')} ${percent}%, 
-                        #e2e8f0 ${percent}%, 
-                        #e2e8f0 100%)`;
+                    const gradient = `linear-gradient(90deg, ${value >= 85 ? '#22c55e' : (value >= 60 ? '#eab308' : '#ef4444')} 0%, ${value >= 85 ? '#16a34a' : (value >= 60 ? '#ca8a04' : '#dc2626')} ${value}%, #e2e8f0 ${value}%, #e2e8f0 100%)`;
                     this.style.background = gradient;
                 });
-                
-                // Initialisation
                 ligneRange.dispatchEvent(new Event('input'));
             }
 
@@ -1101,16 +1200,9 @@
                     const value = parseInt(this.value);
                     bureauPercent.textContent = value + '%';
                     updatePercentageColor(bureauPercent, value);
-                    
-                    const percent = value;
-                    const gradient = `linear-gradient(90deg, 
-                        ${percent >= 85 ? '#22c55e' : (percent >= 60 ? '#eab308' : '#ef4444')} 0%, 
-                        ${percent >= 85 ? '#16a34a' : (percent >= 60 ? '#ca8a04' : '#dc2626')} ${percent}%, 
-                        #e2e8f0 ${percent}%, 
-                        #e2e8f0 100%)`;
+                    const gradient = `linear-gradient(90deg, ${value >= 85 ? '#22c55e' : (value >= 60 ? '#eab308' : '#ef4444')} 0%, ${value >= 85 ? '#16a34a' : (value >= 60 ? '#ca8a04' : '#dc2626')} ${value}%, #e2e8f0 ${value}%, #e2e8f0 100%)`;
                     this.style.background = gradient;
                 });
-                
                 bureauRange.dispatchEvent(new Event('input'));
             }
 
@@ -1121,48 +1213,7 @@
                 mainContent.classList.toggle('expanded');
             });
 
-            // Fermer sidebar sur mobile après clic
-            const menuItemsList = document.querySelectorAll('.sidebar li');
-            menuItemsList.forEach(item => {
-                item.addEventListener('click', () => {
-                    if (window.innerWidth <= 768) {
-                        sidebar.classList.remove('open');
-                        sidebar.classList.add('closed');
-                        mainContent.classList.add('expanded');
-                    }
-                });
-            });
-
-            // Gestion connexion
-            loginForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const email = document.getElementById('email').value;
-                const password = document.getElementById('password').value;
-                loginMessage.textContent = 'Connexion en cours...';
-                loginMessage.className = 'message';
-                
-                auth.signInWithEmailAndPassword(email, password)
-                    .then(() => {
-                        loginMessage.textContent = '';
-                    })
-                    .catch(error => {
-                        loginMessage.textContent = '❌ ' + error.message;
-                        loginMessage.classList.add('error');
-                    });
-            });
-
-            auth.onAuthStateChanged(user => {
-                if (user) {
-                    loginPage.style.display = 'none';
-                    appDiv.style.display = 'block';
-                    loadAllData();
-                } else {
-                    loginPage.style.display = 'flex';
-                    appDiv.style.display = 'none';
-                }
-            });
-
-            // Navigation sidebar
+            // Navigation
             const menuItems = {
                 dashboard: document.getElementById('menu-dashboard'),
                 courbes: document.getElementById('menu-courbes'),
@@ -1199,111 +1250,36 @@
             menuItems.details.addEventListener('click', () => setActiveMenu('details'));
             document.getElementById('menu-deconnexion').addEventListener('click', () => auth.signOut());
 
-            // Fonction pour charger toutes les données
-            function loadAllData() {
-                const auditsRef = db.ref('audits');
-                auditsRef.on('value', (snapshot) => {
-                    const data = snapshot.val();
-                    const audits = [];
-                    for (let key in data) {
-                        audits.push({ id: key, ...data[key] });
-                    }
-                    updateDashboard(audits);
-                    updateCourbes(audits);
-                    updateDetails(audits);
-                }, (error) => {
-                    console.error('Erreur de lecture RTDB:', error);
-                });
-            }
+            // Gestion connexion
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                loginMessage.textContent = 'Connexion en cours...';
+                loginMessage.className = 'message';
+                
+                auth.signInWithEmailAndPassword(email, password)
+                    .then(() => {
+                        loginMessage.textContent = '';
+                    })
+                    .catch(error => {
+                        loginMessage.textContent = '❌ ' + error.message;
+                        loginMessage.classList.add('error');
+                    });
+            });
 
-            // Soumission formulaire ligne
-            document.getElementById('submitLigne').addEventListener('click', async () => {
-                const date = document.getElementById('ligneDate').value;
-                const uap = document.getElementById('ligneUap').value;
-                const ligne = document.getElementById('ligneNom').value.trim();
-                const resultat = parseInt(document.getElementById('ligneResultat').value);
-                
-                if (!date || !uap || !ligne || isNaN(resultat)) {
-                    alert('Veuillez remplir tous les champs');
-                    return;
-                }
-                
-                try {
-                    const newAudit = {
-                        type: 'ligne',
-                        date: date,
-                        uap: uap,
-                        secteur: ligne,
-                        resultat: resultat,
-                        timestamp: firebase.database.ServerValue.TIMESTAMP
-                    };
-                    await db.ref('audits').push(newAudit);
-                    
-                    // Animation de succès
-                    const btn = document.getElementById('submitLigne');
-                    btn.innerHTML = '<i class="fas fa-check"></i> Audit enregistré !';
-                    btn.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
-                    
-                    setTimeout(() => {
-                        btn.innerHTML = '<i class="fas fa-save"></i> Enregistrer l\'audit';
-                        btn.style.background = 'linear-gradient(135deg, #d32f2f, #b71c1c)';
-                    }, 2000);
-                    
-                    // Réinitialiser le formulaire
-                    document.getElementById('ligneDate').value = '';
-                    document.getElementById('ligneUap').value = '';
-                    document.getElementById('ligneNom').value = '';
-                    document.getElementById('ligneResultat').value = 50;
-                    ligneRange.dispatchEvent(new Event('input'));
-                    
-                } catch (error) {
-                    alert('Erreur: ' + error.message);
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    loginPage.style.display = 'none';
+                    appDiv.style.display = 'block';
+                    loadAllData();
+                } else {
+                    loginPage.style.display = 'flex';
+                    appDiv.style.display = 'none';
                 }
             });
 
-            // Soumission formulaire bureau
-            document.getElementById('submitBureau').addEventListener('click', async () => {
-                const date = document.getElementById('bureauDate').value;
-                const service = document.getElementById('bureauService').value.trim();
-                const resultat = parseInt(document.getElementById('bureauResultat').value);
-                
-                if (!date || !service || isNaN(resultat)) {
-                    alert('Veuillez remplir tous les champs');
-                    return;
-                }
-                
-                try {
-                    const newAudit = {
-                        type: 'bureau',
-                        date: date,
-                        secteur: service,
-                        resultat: resultat,
-                        timestamp: firebase.database.ServerValue.TIMESTAMP
-                    };
-                    await db.ref('audits').push(newAudit);
-                    
-                    // Animation de succès
-                    const btn = document.getElementById('submitBureau');
-                    btn.innerHTML = '<i class="fas fa-check"></i> Audit enregistré !';
-                    btn.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
-                    
-                    setTimeout(() => {
-                        btn.innerHTML = '<i class="fas fa-save"></i> Enregistrer l\'audit';
-                        btn.style.background = 'linear-gradient(135deg, #d32f2f, #b71c1c)';
-                    }, 2000);
-                    
-                    // Réinitialiser le formulaire
-                    document.getElementById('bureauDate').value = '';
-                    document.getElementById('bureauService').value = '';
-                    document.getElementById('bureauResultat').value = 50;
-                    bureauRange.dispatchEvent(new Event('input'));
-                    
-                } catch (error) {
-                    alert('Erreur: ' + error.message);
-                }
-            });
-
-            // Fonctions de mise à jour
+            // Fonctions utilitaires
             function getPerformanceClass(score) {
                 if (score >= 85) return 'high';
                 if (score >= 60) return 'medium';
@@ -1318,6 +1294,58 @@
                 return 'Critique';
             }
 
+            function moyenne(arr) {
+                if (arr.length === 0) return 0;
+                const sum = arr.reduce((acc, val) => acc + val, 0);
+                return sum / arr.length;
+            }
+
+            function filterAuditsByFilters(audits) {
+                let filtered = [...audits];
+                const period = document.getElementById('filterPeriod')?.value;
+                const week = document.getElementById('filterWeek')?.value;
+                const date = document.getElementById('filterDate')?.value;
+                const uap = document.getElementById('filterUap')?.value;
+                const ligne = document.getElementById('filterLigne')?.value;
+
+                if (week) {
+                    filtered = filtered.filter(a => {
+                        if (!a.date) return false;
+                        const auditDate = new Date(a.date);
+                        const weekStart = new Date(week);
+                        const weekEnd = new Date(week);
+                        weekEnd.setDate(weekEnd.getDate() + 7);
+                        return auditDate >= weekStart && auditDate < weekEnd;
+                    });
+                } else if (date) {
+                    filtered = filtered.filter(a => a.date === date);
+                }
+
+                if (uap) {
+                    filtered = filtered.filter(a => a.uap === uap);
+                }
+
+                if (ligne) {
+                    filtered = filtered.filter(a => a.secteur === ligne);
+                }
+
+                return filtered;
+            }
+
+            function updateLigneFilterOptions(audits) {
+                const lignes = [...new Set(audits.filter(a => a.type === 'ligne' && a.secteur).map(a => a.secteur))];
+                const select = document.getElementById('filterLigne');
+                if (select) {
+                    const currentValue = select.value;
+                    select.innerHTML = '<option value="">Toutes les lignes</option>';
+                    lignes.sort().forEach(ligne => {
+                        select.innerHTML += `<option value="${ligne}">${ligne}</option>`;
+                    });
+                    if (currentValue && lignes.includes(currentValue)) select.value = currentValue;
+                }
+            }
+
+            // Mise à jour du Dashboard
             function updateDashboard(audits) {
                 const nbAudits = audits.length;
                 const ligneAudits = audits.filter(a => a.type === 'ligne');
@@ -1337,10 +1365,10 @@
                     if (a.resultat < worstBureau.score) worstBureau = { score: a.resultat, secteur: a.secteur };
                 });
 
-                const moyLigneUAP1 = moyenne(audits.filter(a => a.type === 'ligne' && a.uap === 'UAP1'));
-                const moyLigneUAP2 = moyenne(audits.filter(a => a.type === 'ligne' && a.uap === 'UAP2'));
-                const moyUsine = moyenne(ligneAudits);
-                const moyBureaux = moyenne(bureauAudits);
+                const moyLigneUAP1 = moyenne(ligneAudits.filter(a => a.uap === 'UAP1').map(a => a.resultat));
+                const moyLigneUAP2 = moyenne(ligneAudits.filter(a => a.uap === 'UAP2').map(a => a.resultat));
+                const moyUsine = moyenne(ligneAudits.map(a => a.resultat));
+                const moyBureaux = moyenne(bureauAudits.map(a => a.resultat));
 
                 document.getElementById('dashboardStats').innerHTML = `
                     <div class="stat-item">
@@ -1367,12 +1395,6 @@
                         <div class="value">${bestBureau.score}%</div>
                         <div class="sub-value">${bestBureau.secteur}</div>
                     </div>
-                    <div class="stat-item">
-                        <i class="fas fa-building"></i>
-                        <h4>Pire score bureau</h4>
-                        <div class="value">${worstBureau.score}%</div>
-                        <div class="sub-value">${worstBureau.secteur}</div>
-                    </div>
                 `;
 
                 document.getElementById('moyennesSecteur').innerHTML = `
@@ -1395,33 +1417,43 @@
                 `;
             }
 
-            function moyenne(arr) {
-                if (arr.length === 0) return 0;
-                const sum = arr.reduce((acc, a) => acc + a.resultat, 0);
-                return sum / arr.length;
-            }
-
-            let chartInstance = null;
+            // Mise à jour des courbes avec UAP1 et UAP2 séparés
             function updateCourbes(audits) {
-                const mois = {};
-
-                audits.forEach(a => {
+                const filteredAudits = filterAuditsByFilters(audits);
+                const period = document.getElementById('filterPeriod')?.value || 'month';
+                
+                const groupes = {};
+                
+                filteredAudits.forEach(a => {
+                    if (a.type !== 'ligne') return;
                     if (!a.date) return;
+                    
                     const d = new Date(a.date);
-                    const moisKey = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
-                    if (!mois[moisKey]) mois[moisKey] = { uap1: [], uap2: [], usine: [] };
-                    if (a.type === 'ligne') {
-                        if (a.uap === 'UAP1') mois[moisKey].uap1.push(a.resultat);
-                        if (a.uap === 'UAP2') mois[moisKey].uap2.push(a.resultat);
-                        mois[moisKey].usine.push(a.resultat);
+                    let key;
+                    if (period === 'day') {
+                        key = d.toISOString().split('T')[0];
+                    } else if (period === 'week') {
+                        const weekStart = new Date(d);
+                        weekStart.setDate(d.getDate() - d.getDay());
+                        key = weekStart.toISOString().split('T')[0];
+                    } else {
+                        key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+                    }
+                    
+                    if (!groupes[key]) {
+                        groupes[key] = { uap1: [], uap2: [] };
+                    }
+                    if (a.uap === 'UAP1') {
+                        groupes[key].uap1.push(a.resultat);
+                    } else if (a.uap === 'UAP2') {
+                        groupes[key].uap2.push(a.resultat);
                     }
                 });
-
-                const labels = Object.keys(mois).sort();
-                const dataUAP1 = labels.map(m => moyenne(mois[m].uap1));
-                const dataUAP2 = labels.map(m => moyenne(mois[m].uap2));
-                const dataUsine = labels.map(m => moyenne(mois[m].usine));
-
+                
+                const labels = Object.keys(groupes).sort();
+                const dataUAP1 = labels.map(l => moyenne(groupes[l].uap1));
+                const dataUAP2 = labels.map(l => moyenne(groupes[l].uap2));
+                
                 const ctx = document.getElementById('chartMoyennes').getContext('2d');
                 if (chartInstance) chartInstance.destroy();
                 chartInstance = new Chart(ctx, {
@@ -1430,111 +1462,304 @@
                         labels: labels,
                         datasets: [
                             { 
-                                label: 'Moyenne UAP1', 
+                                label: 'UAP1', 
                                 data: dataUAP1, 
-                                borderColor: '#d32f2f', 
-                                backgroundColor: 'rgba(211,47,47,0.1)', 
+                                borderColor: '#3b82f6', 
+                                backgroundColor: 'rgba(59,130,246,0.1)', 
                                 tension: 0.4,
                                 borderWidth: 3,
-                                pointBackgroundColor: '#d32f2f'
+                                pointBackgroundColor: '#3b82f6',
+                                pointRadius: 4,
+                                pointHoverRadius: 6,
+                                fill: true
                             },
                             { 
-                                label: 'Moyenne UAP2', 
+                                label: 'UAP2', 
                                 data: dataUAP2, 
-                                borderColor: '#2c3e50', 
-                                backgroundColor: 'rgba(44,62,80,0.1)', 
+                                borderColor: '#8b5cf6', 
+                                backgroundColor: 'rgba(139,92,246,0.1)', 
                                 tension: 0.4,
                                 borderWidth: 3,
-                                pointBackgroundColor: '#2c3e50'
-                            },
-                            { 
-                                label: 'Moyenne Usine', 
-                                data: dataUsine, 
-                                borderColor: '#22c55e', 
-                                backgroundColor: 'rgba(34,197,94,0.1)', 
-                                tension: 0.4,
-                                borderWidth: 3,
-                                pointBackgroundColor: '#22c55e'
+                                pointBackgroundColor: '#8b5cf6',
+                                pointRadius: 4,
+                                pointHoverRadius: 6,
+                                fill: true
                             }
                         ]
                     },
                     options: {
                         responsive: true,
+                        maintainAspectRatio: true,
                         plugins: { 
                             legend: { 
-                                position: 'bottom',
-                                labels: {
-                                    usePointStyle: true,
-                                    padding: 20
-                                }
+                                position: 'top',
+                                labels: { usePointStyle: true, padding: 15, font: { weight: 'bold' } }
                             },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        return context.dataset.label + ': ' + context.raw.toFixed(1) + '%';
-                                    }
-                                }
-                            }
+                            tooltip: { callbacks: { label: function(context) { return context.dataset.label + ': ' + context.raw.toFixed(1) + '%'; } } }
                         },
                         scales: {
-                            y: {
-                                beginAtZero: true,
-                                max: 100,
-                                grid: {
-                                    color: 'rgba(0,0,0,0.05)'
-                                },
-                                ticks: {
-                                    callback: function(value) {
-                                        return value + '%';
-                                    }
-                                }
-                            }
+                            y: { beginAtZero: true, max: 100, grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { callback: function(value) { return value + '%'; } } },
+                            x: { title: { display: true, text: period === 'day' ? 'Date' : (period === 'week' ? 'Semaine' : 'Mois'), font: { weight: 'bold' } } }
                         }
                     }
                 });
+                
+                // Graphique en barres par ligne
+                updateBarChart(filteredAudits);
+                updateLignesTable(filteredAudits);
+            }
 
-                const lignes = {};
-                audits.filter(a => a.type === 'ligne').forEach(a => {
-                    if (!lignes[a.secteur]) lignes[a.secteur] = [];
-                    lignes[a.secteur].push(a.resultat);
+            // Graphique en barres - performance par ligne
+            function updateBarChart(audits) {
+                const ligneLastScore = new Map();
+                audits.filter(a => a.type === 'ligne' && a.secteur).forEach(a => {
+                    const current = ligneLastScore.get(a.secteur);
+                    if (!current || new Date(a.date) > new Date(current.date)) {
+                        ligneLastScore.set(a.secteur, { score: a.resultat, date: a.date, uap: a.uap });
+                    }
+                });
+                
+                const labels = Array.from(ligneLastScore.keys());
+                const scores = labels.map(l => ligneLastScore.get(l).score);
+                const colors = scores.map(s => s >= 85 ? '#22c55e' : (s >= 60 ? '#eab308' : '#ef4444'));
+                
+                const ctx = document.getElementById('chartBarresLignes').getContext('2d');
+                if (barChartInstance) barChartInstance.destroy();
+                barChartInstance = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Dernier score (%)',
+                            data: scores,
+                            backgroundColor: colors,
+                            borderRadius: 8,
+                            borderWidth: 0,
+                            barPercentage: 0.7
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        scales: {
+                            y: { min: 0, max: 100, ticks: { callback: v => v + '%' }, title: { display: true, text: 'Score (%)' } },
+                            x: { ticks: { maxRotation: 45, minRotation: 45 }, title: { display: true, text: 'Lignes' } }
+                        },
+                        plugins: { tooltip: { callbacks: { label: ctx => `${ctx.raw}%` } } }
+                    }
+                });
+            }
+
+            // Tableau des lignes avec évolution
+            function updateLignesTable(audits) {
+                const lignesData = new Map();
+                audits.filter(a => a.type === 'ligne' && a.secteur).forEach(a => {
+                    if (!lignesData.has(a.secteur)) lignesData.set(a.secteur, []);
+                    lignesData.get(a.secteur).push({ resultat: a.resultat, date: a.date, uap: a.uap });
                 });
                 
                 let tbody = '';
-                for (let ligne in lignes) {
-                    const moy = moyenne(lignes[ligne]);
+                for (let [ligne, values] of lignesData.entries()) {
+                    const sorted = values.sort((a, b) => new Date(b.date) - new Date(a.date));
+                    const moy = moyenne(sorted.map(v => v.resultat));
+                    const dernier = sorted[0];
+                    const avantDernier = sorted[1];
+                    let evolution = '-';
+                    let evolutionClass = '';
+                    if (avantDernier) {
+                        const diff = dernier.resultat - avantDernier.resultat;
+                        if (diff > 0) { evolution = `+${diff}%`; evolutionClass = 'text-green-600'; }
+                        else if (diff < 0) { evolution = `${diff}%`; evolutionClass = 'text-red-600'; }
+                        else evolution = '0%';
+                    }
                     const perfClass = getPerformanceClass(moy);
-                    tbody += `<tr>
-                        <td>${ligne}</td>
-                        <td>${moy.toFixed(1)}%</td>
-                        <td><span class="badge ${perfClass}">${getPerformanceLabel(moy)}</span></td>
-                    </tr>`;
+                    const uapIcon = dernier.uap === 'UAP1' ? '🔵 UAP1' : '🟣 UAP2';
+                    tbody += `
+                        <tr>
+                            <td><strong>${ligne}</strong></td>
+                            <td>${uapIcon}</td>
+                            <td><span class="badge ${perfClass}">${moy.toFixed(1)}%</span></td>
+                            <td>${dernier.resultat}%</td>
+                            <td style="color: ${evolution.includes('+') ? '#22c55e' : (evolution.includes('-') ? '#ef4444' : '#64748b')}">${evolution}</td>
+                            <td><span class="badge ${getPerformanceClass(dernier.resultat)}">${getPerformanceLabel(dernier.resultat)}</span></td>
+                        </tr>
+                    `;
                 }
-                document.querySelector('#resultatsLignes tbody').innerHTML = tbody || '<tr><td colspan="3" style="text-align:center">Aucune donnée disponible</td></tr>';
+                document.querySelector('#resultatsLignes tbody').innerHTML = tbody || '<tr><td colspan="6" style="text-align:center">Aucune donnée disponible</td></tr>';
             }
 
+            // Mise à jour des détails
             function updateDetails(audits) {
-                audits.sort((a, b) => new Date(b.date) - new Date(a.date));
+                const sorted = [...audits].sort((a, b) => new Date(b.date) - new Date(a.date));
                 let tbody = '';
-                audits.forEach(a => {
+                sorted.forEach(a => {
                     const date = a.date ? new Date(a.date).toLocaleDateString('fr-FR') : '';
                     const type = a.type === 'ligne' ? 'Ligne' : 'Bureau';
-                    const secteur = a.secteur + (a.uap ? ` (${a.uap})` : '');
+                    const secteur = a.secteur || '-';
+                    const uap = a.uap || '-';
                     const perfClass = getPerformanceClass(a.resultat);
-                    tbody += `<tr>
-                        <td>${date}</td>
-                        <td>${type}</td>
-                        <td>${secteur}</td>
-                        <td>${a.resultat}%</td>
-                        <td><span class="badge ${perfClass}">${getPerformanceLabel(a.resultat)}</span></td>
-                    </tr>`;
+                    tbody += `
+                        <tr>
+                            <td>${date}</td>
+                            <td>${type}</td>
+                            <td>${secteur}</td>
+                            <td>${uap}</td>
+                            <td>${a.resultat}%</td>
+                            <td><span class="badge ${perfClass}">${getPerformanceLabel(a.resultat)}</span></td>
+                        </tr>
+                    `;
                 });
-                document.querySelector('#auditsTable tbody').innerHTML = tbody || '<tr><td colspan="5" style="text-align:center">Aucun audit enregistré</td></tr>';
+                document.querySelector('#auditsTable tbody').innerHTML = tbody || '<tr><td colspan="6" style="text-align:center">Aucun audit enregistré</td></tr>';
             }
+
+            // Export Excel
+            function exportToExcel(type) {
+                let data = [];
+                if (type === 'details') {
+                    data = allAudits.map(a => ({
+                        'Date': a.date ? new Date(a.date).toLocaleDateString('fr-FR') : '',
+                        'Type': a.type === 'ligne' ? 'Ligne' : 'Bureau',
+                        'Secteur': a.secteur || '',
+                        'UAP': a.uap || '',
+                        'Résultat (%)': a.resultat,
+                        'Performance': getPerformanceLabel(a.resultat)
+                    }));
+                } else if (type === 'courbes') {
+                    const filtered = filterAuditsByFilters(allAudits);
+                    data = filtered.filter(a => a.type === 'ligne').map(a => ({
+                        'Date': a.date ? new Date(a.date).toLocaleDateString('fr-FR') : '',
+                        'Ligne': a.secteur || '',
+                        'UAP': a.uap || '',
+                        'Résultat (%)': a.resultat,
+                        'Performance': getPerformanceLabel(a.resultat)
+                    }));
+                }
+                
+                const ws = XLSX.utils.json_to_sheet(data);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Audits 5S');
+                XLSX.writeFile(wb, `Audit5S_${type}_${new Date().toISOString().split('T')[0]}.xlsx`);
+            }
+
+            // Chargement des données
+            function loadAllData() {
+                const auditsRef = db.ref('audits');
+                auditsRef.on('value', (snapshot) => {
+                    const data = snapshot.val();
+                    allAudits = [];
+                    for (let key in data) {
+                        allAudits.push({ id: key, ...data[key] });
+                    }
+                    updateDashboard(allAudits);
+                    updateCourbes(allAudits);
+                    updateDetails(allAudits);
+                    updateLigneFilterOptions(allAudits);
+                }, (error) => {
+                    console.error('Erreur de lecture RTDB:', error);
+                });
+            }
+
+            // Soumissions
+            document.getElementById('submitLigne').addEventListener('click', async () => {
+                const date = document.getElementById('ligneDate').value;
+                const uap = document.getElementById('ligneUap').value;
+                const ligne = document.getElementById('ligneNom').value.trim();
+                const resultat = parseInt(document.getElementById('ligneResultat').value);
+                
+                if (!date || !uap || !ligne || isNaN(resultat)) {
+                    alert('Veuillez remplir tous les champs');
+                    return;
+                }
+                
+                try {
+                    const newAudit = {
+                        type: 'ligne',
+                        date: date,
+                        uap: uap,
+                        secteur: ligne,
+                        resultat: resultat,
+                        timestamp: firebase.database.ServerValue.TIMESTAMP
+                    };
+                    await db.ref('audits').push(newAudit);
+                    
+                    const btn = document.getElementById('submitLigne');
+                    btn.innerHTML = '<i class="fas fa-check"></i> Audit enregistré !';
+                    btn.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
+                    
+                    setTimeout(() => {
+                        btn.innerHTML = '<i class="fas fa-save"></i> Enregistrer l\'audit';
+                        btn.style.background = 'linear-gradient(135deg, #d32f2f, #b71c1c)';
+                    }, 2000);
+                    
+                    document.getElementById('ligneDate').value = '';
+                    document.getElementById('ligneUap').value = '';
+                    document.getElementById('ligneNom').value = '';
+                    document.getElementById('ligneResultat').value = 50;
+                    ligneRange.dispatchEvent(new Event('input'));
+                    
+                } catch (error) {
+                    alert('Erreur: ' + error.message);
+                }
+            });
+
+            document.getElementById('submitBureau').addEventListener('click', async () => {
+                const date = document.getElementById('bureauDate').value;
+                const service = document.getElementById('bureauService').value.trim();
+                const resultat = parseInt(document.getElementById('bureauResultat').value);
+                
+                if (!date || !service || isNaN(resultat)) {
+                    alert('Veuillez remplir tous les champs');
+                    return;
+                }
+                
+                try {
+                    const newAudit = {
+                        type: 'bureau',
+                        date: date,
+                        secteur: service,
+                        resultat: resultat,
+                        timestamp: firebase.database.ServerValue.TIMESTAMP
+                    };
+                    await db.ref('audits').push(newAudit);
+                    
+                    const btn = document.getElementById('submitBureau');
+                    btn.innerHTML = '<i class="fas fa-check"></i> Audit enregistré !';
+                    btn.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
+                    
+                    setTimeout(() => {
+                        btn.innerHTML = '<i class="fas fa-save"></i> Enregistrer l\'audit';
+                        btn.style.background = 'linear-gradient(135deg, #d32f2f, #b71c1c)';
+                    }, 2000);
+                    
+                    document.getElementById('bureauDate').value = '';
+                    document.getElementById('bureauService').value = '';
+                    document.getElementById('bureauResultat').value = 50;
+                    bureauRange.dispatchEvent(new Event('input'));
+                    
+                } catch (error) {
+                    alert('Erreur: ' + error.message);
+                }
+            });
 
             // Filtres
             document.getElementById('applyFilters').addEventListener('click', () => {
-                loadAllData();
+                updateCourbes(allAudits);
+                updateDetails(allAudits);
             });
+            
+            document.getElementById('resetFilters').addEventListener('click', () => {
+                document.getElementById('filterPeriod').value = 'month';
+                document.getElementById('filterWeek').value = '';
+                document.getElementById('filterDate').value = '';
+                document.getElementById('filterUap').value = '';
+                document.getElementById('filterLigne').value = '';
+                updateCourbes(allAudits);
+                updateDetails(allAudits);
+            });
+            
+            // Export buttons
+            document.getElementById('exportDetailsBtn').addEventListener('click', () => exportToExcel('details'));
+            document.getElementById('exportCourbesBtn').addEventListener('click', () => exportToExcel('courbes'));
         });
     </script>
 </body>
