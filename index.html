@@ -11,7 +11,7 @@
     <!-- SheetJS pour export Excel -->
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -422,6 +422,103 @@
             box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.3);
         }
 
+        /* Dashboard Cards - Design harmonisé */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: all 0.3s;
+            border: 1px solid rgba(211, 47, 47, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #d32f2f, #ef5350);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px -12px rgba(211, 47, 47, 0.2);
+        }
+
+        .stat-card .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .stat-card .stat-value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #1e293b;
+            line-height: 1.2;
+        }
+
+        .stat-card .stat-label {
+            color: #64748b;
+            font-size: 0.85rem;
+            margin-top: 8px;
+            font-weight: 500;
+        }
+
+        .stat-card .stat-sub {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin-top: 5px;
+        }
+
+        /* Couleurs pour les scores */
+        .score-high {
+            color: #16a34a;
+        }
+        .score-medium {
+            color: #eab308;
+        }
+        .score-low {
+            color: #dc2626;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            border: 1px solid rgba(211, 47, 47, 0.1);
+        }
+
+        .card h3 {
+            color: #1e293b;
+            margin-bottom: 25px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .card h3 i {
+            color: #d32f2f;
+            font-size: 1.4rem;
+        }
+
         /* Formulaires */
         .audit-form {
             background: white;
@@ -504,7 +601,6 @@
             transition: all 0.3s;
         }
 
-        /* Couleurs pour les pourcentages */
         .percentage-value.high {
             background: linear-gradient(135deg, #22c55e, #16a34a);
             color: white;
@@ -569,95 +665,6 @@
             box-shadow: 0 15px 30px -5px rgba(211, 47, 47, 0.4);
         }
 
-        /* Dashboard cards */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 25px;
-            margin-bottom: 30px;
-        }
-
-        .stat-item {
-            background: white;
-            padding: 25px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            transition: all 0.3s;
-            border: 1px solid rgba(211, 47, 47, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-item::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #d32f2f, #ef5350);
-        }
-
-        .stat-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px -12px rgba(211, 47, 47, 0.2);
-        }
-
-        .stat-item i {
-            font-size: 2.5rem;
-            background: linear-gradient(135deg, #d32f2f, #ef5350);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 15px;
-        }
-
-        .stat-item h4 {
-            color: #64748b;
-            font-size: 0.95rem;
-            margin-bottom: 10px;
-            font-weight: 500;
-        }
-
-        .stat-item .value {
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: #1e293b;
-            line-height: 1.2;
-        }
-
-        .stat-item .sub-value {
-            font-size: 0.9rem;
-            color: #94a3b8;
-            margin-top: 5px;
-        }
-
-        .card {
-            background: white;
-            padding: 30px;
-            border-radius: 24px;
-            box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-            border: 1px solid rgba(211, 47, 47, 0.1);
-        }
-
-        .card h3 {
-            color: #1e293b;
-            margin-bottom: 25px;
-            font-size: 1.3rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #e2e8f0;
-        }
-
-        .card h3 i {
-            color: #d32f2f;
-            font-size: 1.4rem;
-        }
-
         /* Tableaux */
         table {
             width: 100%;
@@ -690,7 +697,7 @@
             background: #f1f5f9;
         }
 
-        /* Badges pour les pourcentages dans les tableaux */
+        /* Badges */
         .badge {
             display: inline-block;
             padding: 5px 15px;
@@ -714,7 +721,7 @@
             color: #991b1b;
         }
 
-        /* Filtres améliorés */
+        /* Filtres */
         .filter-bar {
             display: flex;
             gap: 15px;
@@ -767,48 +774,15 @@
             align-items: center;
             gap: 8px;
             font-weight: 600;
-            box-shadow: 0 10px 20px -5px rgba(211, 47, 47, 0.3);
             transition: all 0.3s;
         }
 
         .filter-bar button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 15px 30px -5px rgba(211, 47, 47, 0.4);
+            box-shadow: 0 10px 20px -5px rgba(211, 47, 47, 0.3);
         }
 
-        /* Graphique en barres */
-        .bar-chart-container {
-            margin-top: 20px;
-        }
-
-        /* Moyennes par secteur */
-        .moyennes-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-        }
-
-        .moyenne-item {
-            background: #f8fafc;
-            padding: 15px;
-            border-radius: 16px;
-            text-align: center;
-            border: 1px solid #e2e8f0;
-        }
-
-        .moyenne-item strong {
-            color: #1e293b;
-            font-size: 1rem;
-            display: block;
-            margin-bottom: 8px;
-        }
-
-        .moyenne-item .value {
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-
-        /* Graphiques côte à côte */
+        /* Graphiques */
         .charts-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -820,6 +794,39 @@
             .charts-row {
                 grid-template-columns: 1fr;
             }
+        }
+
+        /* Moyennes par secteur */
+        .moyennes-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .moyenne-item {
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            padding: 20px;
+            border-radius: 20px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+
+        .moyenne-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .moyenne-item strong {
+            color: #1e293b;
+            font-size: 1rem;
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .moyenne-item .value {
+            font-size: 2rem;
+            font-weight: 800;
         }
 
         /* Responsive */
@@ -949,7 +956,7 @@
                 </div>
             </div>
 
-            <!-- Courbes & Tendances avec graphiques améliorés -->
+            <!-- Courbes & Tendances -->
             <div id="section-courbes" class="section">
                 <h2>
                     <i class="fas fa-chart-line"></i>
@@ -957,7 +964,6 @@
                     <button id="exportCourbesBtn" class="btn-excel"><i class="fas fa-file-excel"></i> Exporter les données</button>
                 </h2>
                 
-                <!-- Filtres améliorés -->
                 <div class="filter-bar">
                     <div class="filter-group">
                         <label><i class="fas fa-calendar"></i> Période</label>
@@ -999,7 +1005,6 @@
                     </button>
                 </div>
                 
-                <!-- Graphiques côte à côte -->
                 <div class="charts-row">
                     <div class="card">
                         <h3>
@@ -1107,7 +1112,7 @@
                 </div>
             </div>
 
-            <!-- Détails d'audit avec export -->
+            <!-- Détails d'audit -->
             <div id="section-details" class="section">
                 <h2>
                     <i class="fas fa-history"></i>
@@ -1167,6 +1172,22 @@
             let chartInstance = null;
             let barChartInstance = null;
 
+            // Fonction pour fermer la sidebar sur mobile après clic sur un menu
+            function closeSidebarOnMobile() {
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('open');
+                    sidebar.classList.add('closed');
+                    mainContent.classList.add('expanded');
+                }
+            }
+
+            // Toggle sidebar
+            menuToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
+                sidebar.classList.toggle('closed');
+                mainContent.classList.toggle('expanded');
+            });
+
             // Mise à jour en temps réel des pourcentages
             const ligneRange = document.getElementById('ligneResultat');
             const bureauRange = document.getElementById('bureauResultat');
@@ -1206,14 +1227,7 @@
                 bureauRange.dispatchEvent(new Event('input'));
             }
 
-            // Toggle sidebar
-            menuToggle.addEventListener('click', () => {
-                sidebar.classList.toggle('open');
-                sidebar.classList.toggle('closed');
-                mainContent.classList.toggle('expanded');
-            });
-
-            // Navigation
+            // Navigation avec fermeture automatique de la sidebar sur mobile
             const menuItems = {
                 dashboard: document.getElementById('menu-dashboard'),
                 courbes: document.getElementById('menu-courbes'),
@@ -1241,6 +1255,9 @@
                 });
                 const activeSection = document.getElementById(`section-${activeId}`);
                 if (activeSection) activeSection.classList.add('active');
+                
+                // Fermer la sidebar sur mobile après clic
+                closeSidebarOnMobile();
             }
 
             menuItems.dashboard.addEventListener('click', () => setActiveMenu('dashboard'));
@@ -1294,6 +1311,12 @@
                 return 'Critique';
             }
 
+            function getScoreColorClass(score) {
+                if (score >= 85) return 'score-high';
+                if (score >= 60) return 'score-medium';
+                return 'score-low';
+            }
+
             function moyenne(arr) {
                 if (arr.length === 0) return 0;
                 const sum = arr.reduce((acc, val) => acc + val, 0);
@@ -1345,7 +1368,7 @@
                 }
             }
 
-            // Mise à jour du Dashboard
+            // Dashboard avec couleurs harmonisées
             function updateDashboard(audits) {
                 const nbAudits = audits.length;
                 const ligneAudits = audits.filter(a => a.type === 'ligne');
@@ -1371,53 +1394,53 @@
                 const moyBureaux = moyenne(bureauAudits.map(a => a.resultat));
 
                 document.getElementById('dashboardStats').innerHTML = `
-                    <div class="stat-item">
-                        <i class="fas fa-chart-bar"></i>
-                        <h4>Audits réalisés</h4>
-                        <div class="value">${nbAudits}</div>
-                        <div class="sub-value">au total</div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-chart-bar" style="color: #3b82f6;"></i></div>
+                        <div class="stat-value">${nbAudits}</div>
+                        <div class="stat-label">Audits réalisés</div>
+                        <div class="stat-sub">au total</div>
                     </div>
-                    <div class="stat-item">
-                        <i class="fas fa-trophy"></i>
-                        <h4>Meilleur score ligne</h4>
-                        <div class="value">${bestLigne.score}%</div>
-                        <div class="sub-value">${bestLigne.secteur}</div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-trophy" style="color: #f59e0b;"></i></div>
+                        <div class="stat-value ${getScoreColorClass(bestLigne.score)}">${bestLigne.score}%</div>
+                        <div class="stat-label">Meilleur score ligne</div>
+                        <div class="stat-sub">${bestLigne.secteur || '-'}</div>
                     </div>
-                    <div class="stat-item">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <h4>Pire score ligne</h4>
-                        <div class="value">${worstLigne.score}%</div>
-                        <div class="sub-value">${worstLigne.secteur}</div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-exclamation-triangle" style="color: #ef4444;"></i></div>
+                        <div class="stat-value ${getScoreColorClass(worstLigne.score)}">${worstLigne.score}%</div>
+                        <div class="stat-label">Pire score ligne</div>
+                        <div class="stat-sub">${worstLigne.secteur || '-'}</div>
                     </div>
-                    <div class="stat-item">
-                        <i class="fas fa-building"></i>
-                        <h4>Meilleur score bureau</h4>
-                        <div class="value">${bestBureau.score}%</div>
-                        <div class="sub-value">${bestBureau.secteur}</div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-building" style="color: #10b981;"></i></div>
+                        <div class="stat-value ${getScoreColorClass(bestBureau.score)}">${bestBureau.score}%</div>
+                        <div class="stat-label">Meilleur score bureau</div>
+                        <div class="stat-sub">${bestBureau.secteur || '-'}</div>
                     </div>
                 `;
 
                 document.getElementById('moyennesSecteur').innerHTML = `
                     <div class="moyenne-item">
-                        <strong>UAP1</strong>
-                        <div class="value ${getPerformanceClass(moyLigneUAP1)}">${moyLigneUAP1.toFixed(1)}%</div>
+                        <strong><i class="fas fa-chart-line" style="color: #3b82f6;"></i> UAP1</strong>
+                        <div class="value ${getScoreColorClass(moyLigneUAP1)}">${moyLigneUAP1.toFixed(1)}%</div>
                     </div>
                     <div class="moyenne-item">
-                        <strong>UAP2</strong>
-                        <div class="value ${getPerformanceClass(moyLigneUAP2)}">${moyLigneUAP2.toFixed(1)}%</div>
+                        <strong><i class="fas fa-chart-line" style="color: #8b5cf6;"></i> UAP2</strong>
+                        <div class="value ${getScoreColorClass(moyLigneUAP2)}">${moyLigneUAP2.toFixed(1)}%</div>
                     </div>
                     <div class="moyenne-item">
-                        <strong>Usine</strong>
-                        <div class="value ${getPerformanceClass(moyUsine)}">${moyUsine.toFixed(1)}%</div>
+                        <strong><i class="fas fa-industry"></i> Usine</strong>
+                        <div class="value ${getScoreColorClass(moyUsine)}">${moyUsine.toFixed(1)}%</div>
                     </div>
                     <div class="moyenne-item">
-                        <strong>Bureaux</strong>
-                        <div class="value ${getPerformanceClass(moyBureaux)}">${moyBureaux.toFixed(1)}%</div>
+                        <strong><i class="fas fa-building"></i> Bureaux</strong>
+                        <div class="value ${getScoreColorClass(moyBureaux)}">${moyBureaux.toFixed(1)}%</div>
                     </div>
                 `;
             }
 
-            // Mise à jour des courbes avec UAP1 et UAP2 séparés
+            // Mise à jour des courbes
             function updateCourbes(audits) {
                 const filteredAudits = filterAuditsByFilters(audits);
                 const period = document.getElementById('filterPeriod')?.value || 'month';
@@ -1498,18 +1521,16 @@
                             tooltip: { callbacks: { label: function(context) { return context.dataset.label + ': ' + context.raw.toFixed(1) + '%'; } } }
                         },
                         scales: {
-                            y: { beginAtZero: true, max: 100, grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { callback: function(value) { return value + '%'; } } },
-                            x: { title: { display: true, text: period === 'day' ? 'Date' : (period === 'week' ? 'Semaine' : 'Mois'), font: { weight: 'bold' } } }
+                            y: { beginAtZero: true, max: 100, ticks: { callback: function(value) { return value + '%'; } } },
+                            x: { title: { display: true, text: period === 'day' ? 'Date' : (period === 'week' ? 'Semaine' : 'Mois') } }
                         }
                     }
                 });
                 
-                // Graphique en barres par ligne
                 updateBarChart(filteredAudits);
                 updateLignesTable(filteredAudits);
             }
 
-            // Graphique en barres - performance par ligne
             function updateBarChart(audits) {
                 const ligneLastScore = new Map();
                 audits.filter(a => a.type === 'ligne' && a.secteur).forEach(a => {
@@ -1542,15 +1563,14 @@
                         responsive: true,
                         maintainAspectRatio: true,
                         scales: {
-                            y: { min: 0, max: 100, ticks: { callback: v => v + '%' }, title: { display: true, text: 'Score (%)' } },
-                            x: { ticks: { maxRotation: 45, minRotation: 45 }, title: { display: true, text: 'Lignes' } }
+                            y: { min: 0, max: 100, ticks: { callback: v => v + '%' } },
+                            x: { ticks: { maxRotation: 45, minRotation: 45 } }
                         },
                         plugins: { tooltip: { callbacks: { label: ctx => `${ctx.raw}%` } } }
                     }
                 });
             }
 
-            // Tableau des lignes avec évolution
             function updateLignesTable(audits) {
                 const lignesData = new Map();
                 audits.filter(a => a.type === 'ligne' && a.secteur).forEach(a => {
@@ -1565,22 +1585,22 @@
                     const dernier = sorted[0];
                     const avantDernier = sorted[1];
                     let evolution = '-';
-                    let evolutionClass = '';
+                    let evolutionColor = '#64748b';
                     if (avantDernier) {
                         const diff = dernier.resultat - avantDernier.resultat;
-                        if (diff > 0) { evolution = `+${diff}%`; evolutionClass = 'text-green-600'; }
-                        else if (diff < 0) { evolution = `${diff}%`; evolutionClass = 'text-red-600'; }
+                        if (diff > 0) { evolution = `+${diff}%`; evolutionColor = '#22c55e'; }
+                        else if (diff < 0) { evolution = `${diff}%`; evolutionColor = '#ef4444'; }
                         else evolution = '0%';
                     }
                     const perfClass = getPerformanceClass(moy);
-                    const uapIcon = dernier.uap === 'UAP1' ? '🔵 UAP1' : '🟣 UAP2';
+                    const uapIcon = dernier.uap === 'UAP1' ? '<span style="color:#3b82f6">🔵 UAP1</span>' : '<span style="color:#8b5cf6">🟣 UAP2</span>';
                     tbody += `
                         <tr>
                             <td><strong>${ligne}</strong></td>
                             <td>${uapIcon}</td>
                             <td><span class="badge ${perfClass}">${moy.toFixed(1)}%</span></td>
-                            <td>${dernier.resultat}%</td>
-                            <td style="color: ${evolution.includes('+') ? '#22c55e' : (evolution.includes('-') ? '#ef4444' : '#64748b')}">${evolution}</td>
+                            <td class="${getScoreColorClass(dernier.resultat)}">${dernier.resultat}%</td>
+                            <td style="color: ${evolutionColor}; font-weight: 600;">${evolution}</td>
                             <td><span class="badge ${getPerformanceClass(dernier.resultat)}">${getPerformanceLabel(dernier.resultat)}</span></td>
                         </tr>
                     `;
@@ -1588,7 +1608,6 @@
                 document.querySelector('#resultatsLignes tbody').innerHTML = tbody || '<tr><td colspan="6" style="text-align:center">Aucune donnée disponible</td></tr>';
             }
 
-            // Mise à jour des détails
             function updateDetails(audits) {
                 const sorted = [...audits].sort((a, b) => new Date(b.date) - new Date(a.date));
                 let tbody = '';
@@ -1604,7 +1623,7 @@
                             <td>${type}</td>
                             <td>${secteur}</td>
                             <td>${uap}</td>
-                            <td>${a.resultat}%</td>
+                            <td class="${getScoreColorClass(a.resultat)}">${a.resultat}%</td>
                             <td><span class="badge ${perfClass}">${getPerformanceLabel(a.resultat)}</span></td>
                         </tr>
                     `;
@@ -1612,7 +1631,6 @@
                 document.querySelector('#auditsTable tbody').innerHTML = tbody || '<tr><td colspan="6" style="text-align:center">Aucun audit enregistré</td></tr>';
             }
 
-            // Export Excel
             function exportToExcel(type) {
                 let data = [];
                 if (type === 'details') {
@@ -1641,7 +1659,6 @@
                 XLSX.writeFile(wb, `Audit5S_${type}_${new Date().toISOString().split('T')[0]}.xlsx`);
             }
 
-            // Chargement des données
             function loadAllData() {
                 const auditsRef = db.ref('audits');
                 auditsRef.on('value', (snapshot) => {
