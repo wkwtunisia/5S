@@ -973,6 +973,13 @@
                     </h3>
                     <div id="moyennesSecteur" class="moyennes-list"></div>
                 </div>
+                <div class="card">
+                    <h3>
+                        <i class="fas fa-trophy"></i>
+                        Meilleurs et Pires Scores
+                    </h3>
+                    <div id="bestWorstScores" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;"></div>
+                </div>
             </div>
 
             <div id="section-courbes" class="section">
@@ -1454,6 +1461,7 @@
                 const ligneAudits = audits.filter(a => a.type === 'ligne');
                 const bureauAudits = audits.filter(a => a.type === 'bureau');
 
+                // Meilleurs et pires scores pour les lignes
                 let bestLigne = { score: -1, secteur: '' };
                 let worstLigne = { score: 101, secteur: '' };
                 ligneAudits.forEach(a => {
@@ -1461,6 +1469,7 @@
                     if (a.resultat < worstLigne.score) worstLigne = { score: a.resultat, secteur: a.secteur };
                 });
 
+                // Meilleurs et pires scores pour les bureaux
                 let bestBureau = { score: -1, secteur: '' };
                 let worstBureau = { score: 101, secteur: '' };
                 bureauAudits.forEach(a => {
@@ -1498,6 +1507,12 @@
                         <div class="stat-label">Meilleur score bureau</div>
                         <div class="stat-sub">${bestBureau.secteur || '-'}</div>
                     </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-exclamation-circle" style="color: #ef4444;"></i></div>
+                        <div class="stat-value ${getScoreColorClass(worstBureau.score)}">${worstBureau.score}%</div>
+                        <div class="stat-label">Pire score bureau</div>
+                        <div class="stat-sub">${worstBureau.secteur || '-'}</div>
+                    </div>
                 `;
 
                 document.getElementById('moyennesSecteur').innerHTML = `
@@ -1516,6 +1531,30 @@
                     <div class="moyenne-item">
                         <strong><i class="fas fa-building"></i> Bureaux</strong>
                         <div class="value ${getScoreColorClass(moyBureaux)}">${moyBureaux.toFixed(1)}%</div>
+                    </div>
+                `;
+
+                // Nouvelle section Meilleurs et Pires Scores
+                document.getElementById('bestWorstScores').innerHTML = `
+                    <div class="moyenne-item" style="background: linear-gradient(135deg, #fef9c3, #fef3c7);">
+                        <strong><i class="fas fa-trophy" style="color: #f59e0b;"></i> Meilleur score Ligne</strong>
+                        <div class="value ${getScoreColorClass(bestLigne.score)}">${bestLigne.score}%</div>
+                        <div class="stat-sub" style="font-size: 0.9rem; margin-top: 8px;">${bestLigne.secteur || 'Aucune donnée'}</div>
+                    </div>
+                    <div class="moyenne-item" style="background: linear-gradient(135deg, #fee2e2, #fecaca);">
+                        <strong><i class="fas fa-exclamation-triangle" style="color: #ef4444;"></i> Pire score Ligne</strong>
+                        <div class="value ${getScoreColorClass(worstLigne.score)}">${worstLigne.score}%</div>
+                        <div class="stat-sub" style="font-size: 0.9rem; margin-top: 8px;">${worstLigne.secteur || 'Aucune donnée'}</div>
+                    </div>
+                    <div class="moyenne-item" style="background: linear-gradient(135deg, #d1fae5, #a7f3d0);">
+                        <strong><i class="fas fa-building" style="color: #10b981;"></i> Meilleur score Bureau</strong>
+                        <div class="value ${getScoreColorClass(bestBureau.score)}">${bestBureau.score}%</div>
+                        <div class="stat-sub" style="font-size: 0.9rem; margin-top: 8px;">${bestBureau.secteur || 'Aucune donnée'}</div>
+                    </div>
+                    <div class="moyenne-item" style="background: linear-gradient(135deg, #fed7aa, #fdba74);">
+                        <strong><i class="fas fa-exclamation-circle" style="color: #f97316;"></i> Pire score Bureau</strong>
+                        <div class="value ${getScoreColorClass(worstBureau.score)}">${worstBureau.score}%</div>
+                        <div class="stat-sub" style="font-size: 0.9rem; margin-top: 8px;">${worstBureau.secteur || 'Aucune donnée'}</div>
                     </div>
                 `;
             }
@@ -1561,7 +1600,6 @@
                 const dataUAP2 = labelsLignes.map(l => moyenne(groupesLignes[l].uap2));
                 const dataAllLignes = labelsLignes.map(l => moyenne(groupesLignes[l].all));
                 
-                // Graphique UAP1 vs UAP2
                 const ctx = document.getElementById('chartMoyennes').getContext('2d');
                 if (chartInstance) chartInstance.destroy();
                 chartInstance = new Chart(ctx, {
@@ -1604,7 +1642,6 @@
                     }
                 });
                 
-                // Tendance lignes
                 const ctxTrend = document.getElementById('chartTendance').getContext('2d');
                 if (trendChartInstance) trendChartInstance.destroy();
                 trendChartInstance = new Chart(ctxTrend, {
@@ -1645,7 +1682,6 @@
                     }
                 });
                 
-                // Distribution lignes
                 const rangesLignes = { 'Excellent (85-100)': 0, 'Bon (70-84)': 0, 'Moyen (60-69)': 0, 'Faible (40-59)': 0, 'Critique (0-39)': 0 };
                 allScoresLignes.forEach(score => {
                     if (score >= 85) rangesLignes['Excellent (85-100)']++;
@@ -1701,7 +1737,6 @@
                 const labelsBureaux = Object.keys(groupesBureaux).sort();
                 const dataBureaux = labelsBureaux.map(l => moyenne(groupesBureaux[l]));
                 
-                // Graphique bureaux
                 const ctxBureaux = document.getElementById('chartBureaux').getContext('2d');
                 if (chartBureauxInstance) chartBureauxInstance.destroy();
                 chartBureauxInstance = new Chart(ctxBureaux, {
@@ -1733,7 +1768,6 @@
                     }
                 });
                 
-                // Tendance bureaux
                 const ctxTrendBureaux = document.getElementById('chartTendanceBureaux').getContext('2d');
                 if (trendChartBureauxInstance) trendChartBureauxInstance.destroy();
                 trendChartBureauxInstance = new Chart(ctxTrendBureaux, {
@@ -1774,7 +1808,6 @@
                     }
                 });
                 
-                // Distribution bureaux
                 const rangesBureaux = { 'Excellent (85-100)': 0, 'Bon (70-84)': 0, 'Moyen (60-69)': 0, 'Faible (40-59)': 0, 'Critique (0-39)': 0 };
                 allScoresBureaux.forEach(score => {
                     if (score >= 85) rangesBureaux['Excellent (85-100)']++;
