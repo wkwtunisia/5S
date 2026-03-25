@@ -422,7 +422,7 @@
             box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.3);
         }
 
-        /* Dashboard Cards - Design harmonisé */
+        /* Dashboard Cards */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -482,7 +482,6 @@
             margin-top: 5px;
         }
 
-        /* Couleurs pour les scores */
         .score-high {
             color: #16a34a;
         }
@@ -565,7 +564,6 @@
             background: white;
         }
 
-        /* Pourcentage avec slider */
         .percentage-container {
             margin: 20px 0;
             padding: 15px;
@@ -697,7 +695,6 @@
             background: #f1f5f9;
         }
 
-        /* Badges */
         .badge {
             display: inline-block;
             padding: 5px 15px;
@@ -721,7 +718,6 @@
             color: #991b1b;
         }
 
-        /* Filtres */
         .filter-bar {
             display: flex;
             gap: 15px;
@@ -782,7 +778,6 @@
             box-shadow: 0 10px 20px -5px rgba(211, 47, 47, 0.3);
         }
 
-        /* Graphiques */
         .charts-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -790,13 +785,44 @@
             margin-bottom: 30px;
         }
 
+        .trend-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .trend-card {
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            padding: 20px;
+            border-radius: 20px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+
+        .trend-card .trend-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-top: 10px;
+        }
+
+        .trend-up {
+            color: #22c55e;
+        }
+
+        .trend-down {
+            color: #ef4444;
+        }
+
         @media (max-width: 900px) {
             .charts-row {
                 grid-template-columns: 1fr;
             }
+            .trend-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
-        /* Moyennes par secteur */
         .moyennes-list {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -829,7 +855,6 @@
             font-weight: 800;
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
             .menu-toggle {
                 display: block;
@@ -863,10 +888,8 @@
     </style>
 </head>
 <body>
-    <!-- Bouton menu hamburger -->
     <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
 
-    <!-- PAGE DE CONNEXION -->
     <div id="loginPage">
         <div class="login-container">
             <div class="login-logo">
@@ -901,9 +924,7 @@
         </div>
     </div>
 
-    <!-- APPLICATION PRINCIPALE -->
     <div id="app">
-        <!-- Sidebar -->
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <i class="fas fa-clipboard-check"></i>
@@ -938,9 +959,7 @@
             </ul>
         </div>
 
-        <!-- Contenu principal -->
         <div class="main-content" id="mainContent">
-            <!-- Dashboard -->
             <div id="section-dashboard" class="section active">
                 <h2>
                     <i class="fas fa-tachometer-alt"></i>
@@ -956,13 +975,14 @@
                 </div>
             </div>
 
-            <!-- Courbes & Tendances -->
             <div id="section-courbes" class="section">
                 <h2>
                     <i class="fas fa-chart-line"></i>
                     Courbes & Tendances
                     <button id="exportCourbesBtn" class="btn-excel"><i class="fas fa-file-excel"></i> Exporter les données</button>
                 </h2>
+                
+                <div class="trend-stats" id="trendStats"></div>
                 
                 <div class="filter-bar">
                     <div class="filter-group">
@@ -1009,16 +1029,67 @@
                     <div class="card">
                         <h3>
                             <i class="fas fa-chart-line"></i>
-                            Évolution UAP1 vs UAP2
+                            Évolution UAP1 vs UAP2 (Lignes)
                         </h3>
                         <canvas id="chartMoyennes" height="300"></canvas>
                     </div>
+                    <div class="card">
+                        <h3>
+                            <i class="fas fa-chart-line"></i>
+                            Évolution des audits bureaux
+                        </h3>
+                        <canvas id="chartBureaux" height="300"></canvas>
+                    </div>
+                </div>
+                
+                <div class="charts-row">
+                    <div class="card">
+                        <h3>
+                            <i class="fas fa-chart-line"></i>
+                            Tendance générale & prévision (Lignes)
+                        </h3>
+                        <canvas id="chartTendance" height="300"></canvas>
+                    </div>
+                    <div class="card">
+                        <h3>
+                            <i class="fas fa-chart-line"></i>
+                            Tendance générale bureaux
+                        </h3>
+                        <canvas id="chartTendanceBureaux" height="300"></canvas>
+                    </div>
+                </div>
+                
+                <div class="charts-row">
                     <div class="card">
                         <h3>
                             <i class="fas fa-chart-bar"></i>
                             Performance par ligne (dernier audit)
                         </h3>
                         <canvas id="chartBarresLignes" height="300"></canvas>
+                    </div>
+                    <div class="card">
+                        <h3>
+                            <i class="fas fa-chart-bar"></i>
+                            Performance par service (dernier audit)
+                        </h3>
+                        <canvas id="chartBarresBureaux" height="300"></canvas>
+                    </div>
+                </div>
+                
+                <div class="charts-row">
+                    <div class="card">
+                        <h3>
+                            <i class="fas fa-chart-pie"></i>
+                            Distribution des scores (Lignes)
+                        </h3>
+                        <canvas id="chartDistribution" height="300"></canvas>
+                    </div>
+                    <div class="card">
+                        <h3>
+                            <i class="fas fa-chart-pie"></i>
+                            Distribution des scores (Bureaux)
+                        </h3>
+                        <canvas id="chartDistributionBureaux" height="300"></canvas>
                     </div>
                 </div>
                 
@@ -1041,9 +1112,27 @@
                         <tbody></tbody>
                     </table>
                 </div>
+                
+                <div class="card">
+                    <h3>
+                        <i class="fas fa-table"></i>
+                        Résultats détaillés par service (Bureaux)
+                    </h3>
+                    <table id="resultatsBureaux">
+                        <thead>
+                            <tr>
+                                <th>Service</th>
+                                <th>Moyenne</th>
+                                <th>Dernier score</th>
+                                <th>Évolution</th>
+                                <th>Performance</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
             </div>
 
-            <!-- Audit 5S Ligne -->
             <div id="section-auditLigne" class="section">
                 <h2>
                     <i class="fas fa-industry"></i>
@@ -1080,7 +1169,6 @@
                 </div>
             </div>
 
-            <!-- Audit 5S Bureau -->
             <div id="section-auditBureau" class="section">
                 <h2>
                     <i class="fas fa-building"></i>
@@ -1112,7 +1200,6 @@
                 </div>
             </div>
 
-            <!-- Détails d'audit -->
             <div id="section-details" class="section">
                 <h2>
                     <i class="fas fa-history"></i>
@@ -1136,14 +1223,12 @@
         </div>
     </div>
 
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/7.24.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.24.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.24.0/firebase-database.js"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Configuration Firebase
             const firebaseConfig = {
                 apiKey: "AIzaSyC_IXz4-i8yrkg0CD7CemASpR8B96RxNvg",
                 authDomain: "audit-5s-a6416.firebaseapp.com",
@@ -1159,7 +1244,6 @@
             const auth = firebase.auth();
             const db = firebase.database();
 
-            // Éléments DOM
             const loginPage = document.getElementById('loginPage');
             const appDiv = document.getElementById('app');
             const loginForm = document.getElementById('loginForm');
@@ -1170,9 +1254,14 @@
 
             let allAudits = [];
             let chartInstance = null;
+            let chartBureauxInstance = null;
             let barChartInstance = null;
+            let barChartBureauxInstance = null;
+            let trendChartInstance = null;
+            let trendChartBureauxInstance = null;
+            let distributionChartInstance = null;
+            let distributionChartBureauxInstance = null;
 
-            // Fonction pour fermer la sidebar sur mobile après clic sur un menu
             function closeSidebarOnMobile() {
                 if (window.innerWidth <= 768) {
                     sidebar.classList.remove('open');
@@ -1181,14 +1270,12 @@
                 }
             }
 
-            // Toggle sidebar
             menuToggle.addEventListener('click', () => {
                 sidebar.classList.toggle('open');
                 sidebar.classList.toggle('closed');
                 mainContent.classList.toggle('expanded');
             });
 
-            // Mise à jour en temps réel des pourcentages
             const ligneRange = document.getElementById('ligneResultat');
             const bureauRange = document.getElementById('bureauResultat');
             const lignePercent = document.getElementById('lignePercentageValue');
@@ -1227,7 +1314,6 @@
                 bureauRange.dispatchEvent(new Event('input'));
             }
 
-            // Navigation avec fermeture automatique de la sidebar sur mobile
             const menuItems = {
                 dashboard: document.getElementById('menu-dashboard'),
                 courbes: document.getElementById('menu-courbes'),
@@ -1255,8 +1341,6 @@
                 });
                 const activeSection = document.getElementById(`section-${activeId}`);
                 if (activeSection) activeSection.classList.add('active');
-                
-                // Fermer la sidebar sur mobile après clic
                 closeSidebarOnMobile();
             }
 
@@ -1267,7 +1351,6 @@
             menuItems.details.addEventListener('click', () => setActiveMenu('details'));
             document.getElementById('menu-deconnexion').addEventListener('click', () => auth.signOut());
 
-            // Gestion connexion
             loginForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const email = document.getElementById('email').value;
@@ -1296,7 +1379,6 @@
                 }
             });
 
-            // Fonctions utilitaires
             function getPerformanceClass(score) {
                 if (score >= 85) return 'high';
                 if (score >= 60) return 'medium';
@@ -1325,7 +1407,6 @@
 
             function filterAuditsByFilters(audits) {
                 let filtered = [...audits];
-                const period = document.getElementById('filterPeriod')?.value;
                 const week = document.getElementById('filterWeek')?.value;
                 const date = document.getElementById('filterDate')?.value;
                 const uap = document.getElementById('filterUap')?.value;
@@ -1368,7 +1449,6 @@
                 }
             }
 
-            // Dashboard avec couleurs harmonisées
             function updateDashboard(audits) {
                 const nbAudits = audits.length;
                 const ligneAudits = audits.filter(a => a.type === 'ligne');
@@ -1440,17 +1520,18 @@
                 `;
             }
 
-            // Mise à jour des courbes
             function updateCourbes(audits) {
                 const filteredAudits = filterAuditsByFilters(audits);
                 const period = document.getElementById('filterPeriod')?.value || 'month';
                 
-                const groupes = {};
+                updateTrendStats(audits);
                 
-                filteredAudits.forEach(a => {
-                    if (a.type !== 'ligne') return;
+                // Courbes pour les lignes
+                const groupesLignes = {};
+                const allScoresLignes = [];
+                
+                filteredAudits.filter(a => a.type === 'ligne').forEach(a => {
                     if (!a.date) return;
-                    
                     const d = new Date(a.date);
                     let key;
                     if (period === 'day') {
@@ -1463,26 +1544,30 @@
                         key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
                     }
                     
-                    if (!groupes[key]) {
-                        groupes[key] = { uap1: [], uap2: [] };
+                    if (!groupesLignes[key]) {
+                        groupesLignes[key] = { uap1: [], uap2: [], all: [] };
                     }
                     if (a.uap === 'UAP1') {
-                        groupes[key].uap1.push(a.resultat);
+                        groupesLignes[key].uap1.push(a.resultat);
                     } else if (a.uap === 'UAP2') {
-                        groupes[key].uap2.push(a.resultat);
+                        groupesLignes[key].uap2.push(a.resultat);
                     }
+                    groupesLignes[key].all.push(a.resultat);
+                    allScoresLignes.push(a.resultat);
                 });
                 
-                const labels = Object.keys(groupes).sort();
-                const dataUAP1 = labels.map(l => moyenne(groupes[l].uap1));
-                const dataUAP2 = labels.map(l => moyenne(groupes[l].uap2));
+                const labelsLignes = Object.keys(groupesLignes).sort();
+                const dataUAP1 = labelsLignes.map(l => moyenne(groupesLignes[l].uap1));
+                const dataUAP2 = labelsLignes.map(l => moyenne(groupesLignes[l].uap2));
+                const dataAllLignes = labelsLignes.map(l => moyenne(groupesLignes[l].all));
                 
+                // Graphique UAP1 vs UAP2
                 const ctx = document.getElementById('chartMoyennes').getContext('2d');
                 if (chartInstance) chartInstance.destroy();
                 chartInstance = new Chart(ctx, {
                     type: 'line',
                     data: {
-                        labels: labels,
+                        labels: labelsLignes,
                         datasets: [
                             { 
                                 label: 'UAP1', 
@@ -1493,7 +1578,6 @@
                                 borderWidth: 3,
                                 pointBackgroundColor: '#3b82f6',
                                 pointRadius: 4,
-                                pointHoverRadius: 6,
                                 fill: true
                             },
                             { 
@@ -1505,7 +1589,6 @@
                                 borderWidth: 3,
                                 pointBackgroundColor: '#8b5cf6',
                                 pointRadius: 4,
-                                pointHoverRadius: 6,
                                 fill: true
                             }
                         ]
@@ -1514,21 +1597,246 @@
                         responsive: true,
                         maintainAspectRatio: true,
                         plugins: { 
-                            legend: { 
-                                position: 'top',
-                                labels: { usePointStyle: true, padding: 15, font: { weight: 'bold' } }
-                            },
+                            legend: { position: 'top' },
                             tooltip: { callbacks: { label: function(context) { return context.dataset.label + ': ' + context.raw.toFixed(1) + '%'; } } }
                         },
-                        scales: {
-                            y: { beginAtZero: true, max: 100, ticks: { callback: function(value) { return value + '%'; } } },
-                            x: { title: { display: true, text: period === 'day' ? 'Date' : (period === 'week' ? 'Semaine' : 'Mois') } }
-                        }
+                        scales: { y: { beginAtZero: true, max: 100, ticks: { callback: function(value) { return value + '%'; } } } }
+                    }
+                });
+                
+                // Tendance lignes
+                const ctxTrend = document.getElementById('chartTendance').getContext('2d');
+                if (trendChartInstance) trendChartInstance.destroy();
+                trendChartInstance = new Chart(ctxTrend, {
+                    type: 'line',
+                    data: {
+                        labels: labelsLignes,
+                        datasets: [
+                            {
+                                label: 'Moyenne générale lignes',
+                                data: dataAllLignes,
+                                borderColor: '#d32f2f',
+                                backgroundColor: 'rgba(211,47,47,0.1)',
+                                borderWidth: 3,
+                                pointRadius: 5,
+                                pointBackgroundColor: '#d32f2f',
+                                tension: 0.3,
+                                fill: true
+                            },
+                            {
+                                label: 'Tendance (moyenne mobile 3 périodes)',
+                                data: dataAllLignes.map((_, i, arr) => {
+                                    if (i < 2) return null;
+                                    return (arr[i-2] + arr[i-1] + arr[i]) / 3;
+                                }),
+                                borderColor: '#f59e0b',
+                                borderWidth: 2,
+                                borderDash: [5, 5],
+                                pointRadius: 0,
+                                fill: false
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: { tooltip: { callbacks: { label: function(context) { return context.dataset.label + ': ' + (context.raw ? context.raw.toFixed(1) + '%' : 'N/A'); } } } },
+                        scales: { y: { beginAtZero: true, max: 100, ticks: { callback: function(value) { return value + '%'; } } } }
+                    }
+                });
+                
+                // Distribution lignes
+                const rangesLignes = { 'Excellent (85-100)': 0, 'Bon (70-84)': 0, 'Moyen (60-69)': 0, 'Faible (40-59)': 0, 'Critique (0-39)': 0 };
+                allScoresLignes.forEach(score => {
+                    if (score >= 85) rangesLignes['Excellent (85-100)']++;
+                    else if (score >= 70) rangesLignes['Bon (70-84)']++;
+                    else if (score >= 60) rangesLignes['Moyen (60-69)']++;
+                    else if (score >= 40) rangesLignes['Faible (40-59)']++;
+                    else rangesLignes['Critique (0-39)']++;
+                });
+                
+                const ctxDist = document.getElementById('chartDistribution').getContext('2d');
+                if (distributionChartInstance) distributionChartInstance.destroy();
+                distributionChartInstance = new Chart(ctxDist, {
+                    type: 'pie',
+                    data: {
+                        labels: Object.keys(rangesLignes),
+                        datasets: [{
+                            data: Object.values(rangesLignes),
+                            backgroundColor: ['#22c55e', '#84cc16', '#eab308', '#f97316', '#ef4444'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: { legend: { position: 'right' }, tooltip: { callbacks: { label: function(context) { return context.label + ': ' + context.raw + ' audits (' + ((context.raw / allScoresLignes.length) * 100).toFixed(1) + '%)'; } } } }
+                    }
+                });
+                
+                // Courbes pour les bureaux
+                const groupesBureaux = {};
+                const allScoresBureaux = [];
+                
+                filteredAudits.filter(a => a.type === 'bureau').forEach(a => {
+                    if (!a.date) return;
+                    const d = new Date(a.date);
+                    let key;
+                    if (period === 'day') {
+                        key = d.toISOString().split('T')[0];
+                    } else if (period === 'week') {
+                        const weekStart = new Date(d);
+                        weekStart.setDate(d.getDate() - d.getDay());
+                        key = weekStart.toISOString().split('T')[0];
+                    } else {
+                        key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+                    }
+                    
+                    if (!groupesBureaux[key]) {
+                        groupesBureaux[key] = [];
+                    }
+                    groupesBureaux[key].push(a.resultat);
+                    allScoresBureaux.push(a.resultat);
+                });
+                
+                const labelsBureaux = Object.keys(groupesBureaux).sort();
+                const dataBureaux = labelsBureaux.map(l => moyenne(groupesBureaux[l]));
+                
+                // Graphique bureaux
+                const ctxBureaux = document.getElementById('chartBureaux').getContext('2d');
+                if (chartBureauxInstance) chartBureauxInstance.destroy();
+                chartBureauxInstance = new Chart(ctxBureaux, {
+                    type: 'line',
+                    data: {
+                        labels: labelsBureaux,
+                        datasets: [
+                            { 
+                                label: 'Moyenne bureaux', 
+                                data: dataBureaux, 
+                                borderColor: '#10b981', 
+                                backgroundColor: 'rgba(16,185,129,0.1)', 
+                                tension: 0.4,
+                                borderWidth: 3,
+                                pointBackgroundColor: '#10b981',
+                                pointRadius: 4,
+                                fill: true
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: { 
+                            legend: { position: 'top' },
+                            tooltip: { callbacks: { label: function(context) { return context.dataset.label + ': ' + context.raw.toFixed(1) + '%'; } } }
+                        },
+                        scales: { y: { beginAtZero: true, max: 100, ticks: { callback: function(value) { return value + '%'; } } } }
+                    }
+                });
+                
+                // Tendance bureaux
+                const ctxTrendBureaux = document.getElementById('chartTendanceBureaux').getContext('2d');
+                if (trendChartBureauxInstance) trendChartBureauxInstance.destroy();
+                trendChartBureauxInstance = new Chart(ctxTrendBureaux, {
+                    type: 'line',
+                    data: {
+                        labels: labelsBureaux,
+                        datasets: [
+                            {
+                                label: 'Moyenne bureaux',
+                                data: dataBureaux,
+                                borderColor: '#d32f2f',
+                                backgroundColor: 'rgba(211,47,47,0.1)',
+                                borderWidth: 3,
+                                pointRadius: 5,
+                                pointBackgroundColor: '#d32f2f',
+                                tension: 0.3,
+                                fill: true
+                            },
+                            {
+                                label: 'Tendance (moyenne mobile 3 périodes)',
+                                data: dataBureaux.map((_, i, arr) => {
+                                    if (i < 2) return null;
+                                    return (arr[i-2] + arr[i-1] + arr[i]) / 3;
+                                }),
+                                borderColor: '#f59e0b',
+                                borderWidth: 2,
+                                borderDash: [5, 5],
+                                pointRadius: 0,
+                                fill: false
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: { tooltip: { callbacks: { label: function(context) { return context.dataset.label + ': ' + (context.raw ? context.raw.toFixed(1) + '%' : 'N/A'); } } } },
+                        scales: { y: { beginAtZero: true, max: 100, ticks: { callback: function(value) { return value + '%'; } } } }
+                    }
+                });
+                
+                // Distribution bureaux
+                const rangesBureaux = { 'Excellent (85-100)': 0, 'Bon (70-84)': 0, 'Moyen (60-69)': 0, 'Faible (40-59)': 0, 'Critique (0-39)': 0 };
+                allScoresBureaux.forEach(score => {
+                    if (score >= 85) rangesBureaux['Excellent (85-100)']++;
+                    else if (score >= 70) rangesBureaux['Bon (70-84)']++;
+                    else if (score >= 60) rangesBureaux['Moyen (60-69)']++;
+                    else if (score >= 40) rangesBureaux['Faible (40-59)']++;
+                    else rangesBureaux['Critique (0-39)']++;
+                });
+                
+                const ctxDistBureaux = document.getElementById('chartDistributionBureaux').getContext('2d');
+                if (distributionChartBureauxInstance) distributionChartBureauxInstance.destroy();
+                distributionChartBureauxInstance = new Chart(ctxDistBureaux, {
+                    type: 'pie',
+                    data: {
+                        labels: Object.keys(rangesBureaux),
+                        datasets: [{
+                            data: Object.values(rangesBureaux),
+                            backgroundColor: ['#22c55e', '#84cc16', '#eab308', '#f97316', '#ef4444'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: { legend: { position: 'right' }, tooltip: { callbacks: { label: function(context) { return context.label + ': ' + context.raw + ' audits (' + ((context.raw / allScoresBureaux.length) * 100).toFixed(1) + '%)'; } } } }
                     }
                 });
                 
                 updateBarChart(filteredAudits);
+                updateBarChartBureaux(filteredAudits);
                 updateLignesTable(filteredAudits);
+                updateBureauxTable(filteredAudits);
+            }
+            
+            function updateTrendStats(audits) {
+                const ligneAudits = audits.filter(a => a.type === 'ligne');
+                const bureauAudits = audits.filter(a => a.type === 'bureau');
+                
+                const moyLignes = moyenne(ligneAudits.map(a => a.resultat));
+                const moyBureaux = moyenne(bureauAudits.map(a => a.resultat));
+                
+                document.getElementById('trendStats').innerHTML = `
+                    <div class="trend-card">
+                        <i class="fas fa-industry"></i>
+                        <div>Moyenne lignes</div>
+                        <div class="trend-value ${getScoreColorClass(moyLignes)}">${moyLignes.toFixed(1)}%</div>
+                    </div>
+                    <div class="trend-card">
+                        <i class="fas fa-building"></i>
+                        <div>Moyenne bureaux</div>
+                        <div class="trend-value ${getScoreColorClass(moyBureaux)}">${moyBureaux.toFixed(1)}%</div>
+                    </div>
+                    <div class="trend-card">
+                        <i class="fas fa-chart-line"></i>
+                        <div>Total audits lignes</div>
+                        <div class="trend-value">${ligneAudits.length}</div>
+                    </div>
+                    <div class="trend-card">
+                        <i class="fas fa-chart-line"></i>
+                        <div>Total audits bureaux</div>
+                        <div class="trend-value">${bureauAudits.length}</div>
+                    </div>
+                `;
             }
 
             function updateBarChart(audits) {
@@ -1547,6 +1855,46 @@
                 const ctx = document.getElementById('chartBarresLignes').getContext('2d');
                 if (barChartInstance) barChartInstance.destroy();
                 barChartInstance = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Dernier score (%)',
+                            data: scores,
+                            backgroundColor: colors,
+                            borderRadius: 8,
+                            borderWidth: 0,
+                            barPercentage: 0.7
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        scales: {
+                            y: { min: 0, max: 100, ticks: { callback: v => v + '%' } },
+                            x: { ticks: { maxRotation: 45, minRotation: 45 } }
+                        },
+                        plugins: { tooltip: { callbacks: { label: ctx => `${ctx.raw}%` } } }
+                    }
+                });
+            }
+            
+            function updateBarChartBureaux(audits) {
+                const bureauLastScore = new Map();
+                audits.filter(a => a.type === 'bureau' && a.secteur).forEach(a => {
+                    const current = bureauLastScore.get(a.secteur);
+                    if (!current || new Date(a.date) > new Date(current.date)) {
+                        bureauLastScore.set(a.secteur, { score: a.resultat, date: a.date });
+                    }
+                });
+                
+                const labels = Array.from(bureauLastScore.keys());
+                const scores = labels.map(l => bureauLastScore.get(l).score);
+                const colors = scores.map(s => s >= 85 ? '#22c55e' : (s >= 60 ? '#eab308' : '#ef4444'));
+                
+                const ctx = document.getElementById('chartBarresBureaux').getContext('2d');
+                if (barChartBureauxInstance) barChartBureauxInstance.destroy();
+                barChartBureauxInstance = new Chart(ctx, {
                     type: 'bar',
                     data: {
                         labels: labels,
@@ -1607,6 +1955,41 @@
                 }
                 document.querySelector('#resultatsLignes tbody').innerHTML = tbody || '<tr><td colspan="6" style="text-align:center">Aucune donnée disponible</td></tr>';
             }
+            
+            function updateBureauxTable(audits) {
+                const bureauxData = new Map();
+                audits.filter(a => a.type === 'bureau' && a.secteur).forEach(a => {
+                    if (!bureauxData.has(a.secteur)) bureauxData.set(a.secteur, []);
+                    bureauxData.get(a.secteur).push({ resultat: a.resultat, date: a.date });
+                });
+                
+                let tbody = '';
+                for (let [service, values] of bureauxData.entries()) {
+                    const sorted = values.sort((a, b) => new Date(b.date) - new Date(a.date));
+                    const moy = moyenne(sorted.map(v => v.resultat));
+                    const dernier = sorted[0];
+                    const avantDernier = sorted[1];
+                    let evolution = '-';
+                    let evolutionColor = '#64748b';
+                    if (avantDernier) {
+                        const diff = dernier.resultat - avantDernier.resultat;
+                        if (diff > 0) { evolution = `+${diff}%`; evolutionColor = '#22c55e'; }
+                        else if (diff < 0) { evolution = `${diff}%`; evolutionColor = '#ef4444'; }
+                        else evolution = '0%';
+                    }
+                    const perfClass = getPerformanceClass(moy);
+                    tbody += `
+                        <tr>
+                            <td><strong>${service}</strong></td>
+                            <td><span class="badge ${perfClass}">${moy.toFixed(1)}%</span></td>
+                            <td class="${getScoreColorClass(dernier.resultat)}">${dernier.resultat}%</td>
+                            <td style="color: ${evolutionColor}; font-weight: 600;">${evolution}</td>
+                            <td><span class="badge ${getPerformanceClass(dernier.resultat)}">${getPerformanceLabel(dernier.resultat)}</span></td>
+                        </tr>
+                    `;
+                }
+                document.querySelector('#resultatsBureaux tbody').innerHTML = tbody || '<tr><td colspan="5" style="text-align:center">Aucune donnée disponible</td></tr>';
+            }
 
             function updateDetails(audits) {
                 const sorted = [...audits].sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -1644,9 +2027,10 @@
                     }));
                 } else if (type === 'courbes') {
                     const filtered = filterAuditsByFilters(allAudits);
-                    data = filtered.filter(a => a.type === 'ligne').map(a => ({
+                    data = filtered.map(a => ({
                         'Date': a.date ? new Date(a.date).toLocaleDateString('fr-FR') : '',
-                        'Ligne': a.secteur || '',
+                        'Type': a.type === 'ligne' ? 'Ligne' : 'Bureau',
+                        'Secteur': a.secteur || '',
                         'UAP': a.uap || '',
                         'Résultat (%)': a.resultat,
                         'Performance': getPerformanceLabel(a.resultat)
@@ -1676,7 +2060,6 @@
                 });
             }
 
-            // Soumissions
             document.getElementById('submitLigne').addEventListener('click', async () => {
                 const date = document.getElementById('ligneDate').value;
                 const uap = document.getElementById('ligneUap').value;
@@ -1758,7 +2141,6 @@
                 }
             });
 
-            // Filtres
             document.getElementById('applyFilters').addEventListener('click', () => {
                 updateCourbes(allAudits);
                 updateDetails(allAudits);
@@ -1774,7 +2156,6 @@
                 updateDetails(allAudits);
             });
             
-            // Export buttons
             document.getElementById('exportDetailsBtn').addEventListener('click', () => exportToExcel('details'));
             document.getElementById('exportCourbesBtn').addEventListener('click', () => exportToExcel('courbes'));
         });
