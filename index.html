@@ -4,886 +4,98 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Audit 5S - Portail Professionnel</title>
-    <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- SheetJS pour export Excel -->
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* === PAGE DE CONNEXION MODERNE === */
-        #loginPage {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            position: relative;
-            overflow: hidden;
-        }
-
-        #loginPage::before {
-            content: '';
-            position: absolute;
-            width: 2000px;
-            height: 2000px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
-            top: -1000px;
-            right: -500px;
-            transform: rotate(45deg);
-        }
-
-        #loginPage::after {
-            content: '';
-            position: absolute;
-            width: 2000px;
-            height: 2000px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
-            bottom: -1000px;
-            left: -500px;
-            transform: rotate(45deg);
-        }
-
-        .login-container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 3rem;
-            border-radius: 24px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            width: 420px;
-            text-align: center;
-            position: relative;
-            z-index: 10;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            animation: slideUp 0.5s ease-out;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .login-logo {
-            margin-bottom: 2rem;
-        }
-
-        .login-logo i {
-            font-size: 4rem;
-            background: linear-gradient(135deg, #d32f2f, #b71c1c);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 1rem;
-        }
-
-        .login-container h2 {
-            color: #1e293b;
-            margin-bottom: 0.5rem;
-            font-weight: 700;
-            font-size: 2rem;
-        }
-
-        .login-container p {
-            color: #64748b;
-            margin-bottom: 2rem;
-            font-size: 0.95rem;
-        }
-
-        .input-group {
-            margin-bottom: 1.5rem;
-            text-align: left;
-        }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: #334155;
-            font-weight: 500;
-            font-size: 0.9rem;
-        }
-
-        .input-group label i {
-            color: #d32f2f;
-            margin-right: 0.5rem;
-            width: 20px;
-        }
-
-        .login-container input {
-            width: 100%;
-            padding: 14px 16px;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            font-size: 1rem;
-            transition: all 0.3s;
-            background: white;
-        }
-
-        .login-container input:focus {
-            border-color: #d32f2f;
-            outline: none;
-            box-shadow: 0 0 0 4px rgba(211, 47, 47, 0.1);
-        }
-
-        .login-container button {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #d32f2f, #b71c1c);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 1rem;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            box-shadow: 0 10px 20px -5px rgba(211, 47, 47, 0.3);
-        }
-
-        .login-container button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 30px -5px rgba(211, 47, 47, 0.4);
-        }
-
-        .login-container button i {
-            font-size: 1.1rem;
-        }
-
-        .login-footer {
-            margin-top: 2rem;
-            color: #64748b;
-            font-size: 0.85rem;
-        }
-
-        .login-footer i {
-            color: #d32f2f;
-            margin: 0 4px;
-        }
-
-        .message {
-            margin-top: 1rem;
-            padding: 12px;
-            border-radius: 10px;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        .error {
-            background: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #fecaca;
-        }
-
-        .success {
-            background: #dcfce7;
-            color: #166534;
-            border: 1px solid #bbf7d0;
-        }
-
-        /* === APPLICATION PRINCIPALE === */
-        #app {
-            display: none;
-            height: 100vh;
-            overflow: hidden;
-            position: relative;
-        }
-
-        /* Bouton hamburger */
-        .menu-toggle {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 1001;
-            background: linear-gradient(135deg, #d32f2f, #b71c1c);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            padding: 12px 18px;
-            font-size: 1.2rem;
-            cursor: pointer;
-            display: none;
-            box-shadow: 0 4px 15px rgba(211, 47, 47, 0.3);
-            transition: all 0.3s;
-        }
-
-        .menu-toggle:hover {
-            transform: scale(1.05);
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: 280px;
-            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
-            color: #e2e8f0;
-            position: fixed;
-            height: 100%;
-            padding-top: 20px;
-            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-            z-index: 1000;
-            overflow-y: auto;
-        }
-
-        .sidebar::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .sidebar::-webkit-scrollbar-track {
-            background: #334155;
-        }
-
-        .sidebar::-webkit-scrollbar-thumb {
-            background: #d32f2f;
-            border-radius: 3px;
-        }
-
-        .sidebar.closed {
-            transform: translateX(-280px);
-        }
-
-        .sidebar-header {
-            text-align: center;
-            padding: 25px 20px;
-            margin-bottom: 20px;
-            border-bottom: 2px solid rgba(211, 47, 47, 0.3);
-        }
-
-        .sidebar-header i {
-            font-size: 2.5rem;
-            background: linear-gradient(135deg, #d32f2f, #ef5350);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
-        }
-
-        .sidebar-header h3 {
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: white;
-        }
-
-        .sidebar-header p {
-            font-size: 0.85rem;
-            color: #94a3b8;
-            margin-top: 5px;
-        }
-
-        .sidebar ul {
-            list-style: none;
-            padding: 0 15px;
-        }
-
-        .sidebar li {
-            padding: 15px 20px;
-            margin: 5px 0;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
-            border-radius: 12px;
-            color: #cbd5e1;
-        }
-
-        .sidebar li i {
-            width: 25px;
-            margin-right: 12px;
-            font-size: 1.2rem;
-            color: #d32f2f;
-            transition: all 0.3s;
-        }
-
-        .sidebar li:hover {
-            background: rgba(211, 47, 47, 0.15);
-            color: white;
-            transform: translateX(5px);
-        }
-
-        .sidebar li:hover i {
-            color: white;
-        }
-
-        .sidebar li.active {
-            background: linear-gradient(90deg, #d32f2f, #b71c1c);
-            color: white;
-            box-shadow: 0 10px 20px -5px rgba(211, 47, 47, 0.3);
-        }
-
-        .sidebar li.active i {
-            color: white;
-        }
-
-        #menu-deconnexion {
-            margin-top: 30px;
-            border-top: 1px solid #334155;
-            color: #f87171;
-        }
-
-        #menu-deconnexion i {
-            color: #f87171;
-        }
-
-        /* Contenu principal */
-        .main-content {
-            margin-left: 280px;
-            padding: 30px;
-            height: 100%;
-            overflow-y: auto;
-            background-color: #f8fafc;
-            transition: margin-left 0.3s ease;
-        }
-
-        .main-content.expanded {
-            margin-left: 0;
-        }
-
-        /* Sections */
-        .section {
-            display: none;
-            animation: fadeIn 0.4s ease-out;
-        }
-
-        .section.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        h2 {
-            color: #1e293b;
-            margin-bottom: 30px;
-            font-weight: 700;
-            font-size: 1.8rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            border-left: 5px solid #d32f2f;
-            padding-left: 20px;
-            flex-wrap: wrap;
-        }
-
-        h2 i {
-            color: #d32f2f;
-            font-size: 2rem;
-        }
-
-        .btn-excel {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s;
-            font-size: 0.9rem;
-        }
-
-        .btn-excel:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.3);
-        }
-
-        /* Dashboard Cards */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 25px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 25px;
-            border-radius: 24px;
-            box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            transition: all 0.3s;
-            border: 1px solid rgba(211, 47, 47, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #d32f2f, #ef5350);
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px -12px rgba(211, 47, 47, 0.2);
-        }
-
-        .stat-card .stat-icon {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-        }
-
-        .stat-card .stat-value {
-            font-size: 2.2rem;
-            font-weight: 800;
-            color: #1e293b;
-            line-height: 1.2;
-        }
-
-        .stat-card .stat-label {
-            color: #64748b;
-            font-size: 0.85rem;
-            margin-top: 8px;
-            font-weight: 500;
-        }
-
-        .stat-card .stat-sub {
-            font-size: 0.8rem;
-            color: #94a3b8;
-            margin-top: 5px;
-        }
-
-        .score-high {
-            color: #16a34a;
-        }
-        .score-medium {
-            color: #eab308;
-        }
-        .score-low {
-            color: #dc2626;
-        }
-
-        .card {
-            background: white;
-            padding: 30px;
-            border-radius: 24px;
-            box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-            border: 1px solid rgba(211, 47, 47, 0.1);
-        }
-
-        .card h3 {
-            color: #1e293b;
-            margin-bottom: 25px;
-            font-size: 1.3rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #e2e8f0;
-        }
-
-        .card h3 i {
-            color: #d32f2f;
-            font-size: 1.4rem;
-        }
-
-        /* Formulaires */
-        .audit-form {
-            background: white;
-            padding: 35px;
-            border-radius: 24px;
-            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.1);
-            max-width: 550px;
-            margin-top: 20px;
-            border: 1px solid rgba(211, 47, 47, 0.1);
-        }
-
-        .audit-form h3 {
-            color: #1e293b;
-            margin-bottom: 25px;
-            font-size: 1.4rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding-bottom: 15px;
-            border-bottom: 2px dashed #e2e8f0;
-        }
-
-        .audit-form h3 i {
-            color: #d32f2f;
-            font-size: 1.6rem;
-        }
-
-        .audit-form input, .audit-form select {
-            width: 100%;
-            padding: 14px 18px;
-            margin: 10px 0;
-            border: 2px solid #e2e8f0;
-            border-radius: 14px;
-            font-size: 1rem;
-            transition: all 0.3s;
-            background: #f8fafc;
-        }
-
-        .audit-form input:focus, .audit-form select:focus {
-            border-color: #d32f2f;
-            outline: none;
-            box-shadow: 0 0 0 4px rgba(211, 47, 47, 0.1);
-            background: white;
-        }
-
-        .percentage-container {
-            margin: 20px 0;
-            padding: 15px;
-            background: #f8fafc;
-            border-radius: 16px;
-            border: 2px solid #e2e8f0;
-        }
-
-        .percentage-label {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .percentage-label span:first-child {
-            font-weight: 600;
-            color: #334155;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .percentage-label span:first-child i {
-            color: #d32f2f;
-        }
-
-        .percentage-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            padding: 5px 15px;
-            border-radius: 30px;
-            transition: all 0.3s;
-        }
-
-        .percentage-value.high {
-            background: linear-gradient(135deg, #22c55e, #16a34a);
-            color: white;
-            box-shadow: 0 4px 10px rgba(34, 197, 94, 0.3);
-        }
-
-        .percentage-value.medium {
-            background: linear-gradient(135deg, #eab308, #ca8a04);
-            color: white;
-            box-shadow: 0 4px 10px rgba(234, 179, 8, 0.3);
-        }
-
-        .percentage-value.low {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: white;
-            box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
-        }
-
-        input[type=range] {
-            width: 100%;
-            height: 10px;
-            border-radius: 5px;
-            -webkit-appearance: none;
-            appearance: none;
-            outline: none;
-        }
-
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: #d32f2f;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            border: 3px solid white;
-            margin-top: -7px;
-        }
-
-        .audit-form button {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, #d32f2f, #b71c1c);
-            color: white;
-            border: none;
-            border-radius: 14px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 20px;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            box-shadow: 0 10px 20px -5px rgba(211, 47, 47, 0.3);
-        }
-
-        .audit-form button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 30px -5px rgba(211, 47, 47, 0.4);
-        }
-
-        /* Tableaux */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.1);
-        }
-
-        th {
-            background: linear-gradient(135deg, #1e293b, #0f172a);
-            color: white;
-            font-weight: 600;
-            padding: 18px 20px;
-            font-size: 0.95rem;
-        }
-
-        td {
-            padding: 15px 20px;
-            color: #334155;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        tr:last-child td {
-            border-bottom: none;
-        }
-
-        tr:hover td {
-            background: #f1f5f9;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 5px 15px;
-            border-radius: 30px;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .badge.high {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .badge.medium {
-            background: #fef9c3;
-            color: #854d0e;
-        }
-
-        .badge.low {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .filter-bar {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-            background: white;
-            padding: 20px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(211, 47, 47, 0.1);
-            align-items: flex-end;
-        }
-
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .filter-group label {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: #64748b;
-        }
-
-        .filter-bar input, .filter-bar select {
-            padding: 12px 18px;
-            border: 2px solid #e2e8f0;
-            border-radius: 14px;
-            font-size: 0.95rem;
-            background: #f8fafc;
-            transition: all 0.3s;
-            min-width: 160px;
-        }
-
-        .filter-bar input:focus, .filter-bar select:focus {
-            border-color: #d32f2f;
-            outline: none;
-            box-shadow: 0 0 0 4px rgba(211, 47, 47, 0.1);
-        }
-
-        .filter-bar button {
-            padding: 12px 24px;
-            background: linear-gradient(135deg, #d32f2f, #b71c1c);
-            color: white;
-            border: none;
-            border-radius: 14px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-
-        .filter-bar button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px -5px rgba(211, 47, 47, 0.3);
-        }
-
-        .charts-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-
-        .trend-stats {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .trend-card {
-            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
-            padding: 20px;
-            border-radius: 20px;
-            text-align: center;
-            border: 1px solid #e2e8f0;
-        }
-
-        .trend-card .trend-value {
-            font-size: 1.8rem;
-            font-weight: 800;
-            margin-top: 10px;
-        }
-
-        .trend-up {
-            color: #22c55e;
-        }
-
-        .trend-down {
-            color: #ef4444;
-        }
-
-        @media (max-width: 900px) {
-            .charts-row {
-                grid-template-columns: 1fr;
-            }
-            .trend-stats {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        .moyennes-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-        }
-
-        .moyenne-item {
-            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
-            padding: 20px;
-            border-radius: 20px;
-            text-align: center;
-            border: 1px solid #e2e8f0;
-            transition: all 0.3s;
-        }
-
-        .moyenne-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
-        }
-
-        .moyenne-item strong {
-            color: #1e293b;
-            font-size: 1rem;
-            display: block;
-            margin-bottom: 12px;
-        }
-
-        .moyenne-item .value {
-            font-size: 2rem;
-            font-weight: 800;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; height: 100vh; overflow: hidden; }
+        #loginPage { display: flex; justify-content: center; align-items: center; height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .login-container { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); padding: 3rem; border-radius: 24px; width: 420px; text-align: center; }
+        .login-logo i { font-size: 4rem; background: linear-gradient(135deg, #d32f2f, #b71c1c); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .login-container h2 { color: #1e293b; margin-bottom: 0.5rem; }
+        .input-group { margin-bottom: 1.5rem; text-align: left; }
+        .login-container input { width: 100%; padding: 14px; border: 2px solid #e2e8f0; border-radius: 12px; }
+        .login-container button { width: 100%; padding: 14px; background: linear-gradient(135deg, #d32f2f, #b71c1c); color: white; border: none; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .message { margin-top: 1rem; padding: 12px; border-radius: 10px; }
+        .error { background: #fee2e2; color: #991b1b; }
+        #app { display: none; height: 100vh; overflow: hidden; }
+        .menu-toggle { position: fixed; top: 20px; left: 20px; z-index: 1001; background: linear-gradient(135deg, #d32f2f, #b71c1c); color: white; border: none; border-radius: 12px; padding: 12px 18px; cursor: pointer; display: none; }
+        .sidebar { width: 280px; background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%); position: fixed; height: 100%; padding-top: 20px; transition: transform 0.3s; z-index: 1000; overflow-y: auto; }
+        .sidebar.closed { transform: translateX(-280px); }
+        .sidebar-header { text-align: center; padding: 25px 20px; border-bottom: 2px solid rgba(211,47,47,0.3); }
+        .sidebar-header i { font-size: 2.5rem; background: linear-gradient(135deg, #d32f2f, #ef5350); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .sidebar-header h3 { font-size: 1.4rem; color: white; }
+        .sidebar ul { list-style: none; padding: 0 15px; }
+        .sidebar li { padding: 15px 20px; margin: 5px 0; cursor: pointer; display: flex; align-items: center; border-radius: 12px; color: #cbd5e1; transition: all 0.3s; }
+        .sidebar li i { width: 25px; margin-right: 12px; color: #d32f2f; }
+        .sidebar li:hover { background: rgba(211,47,47,0.15); color: white; }
+        .sidebar li.active { background: linear-gradient(90deg, #d32f2f, #b71c1c); color: white; }
+        .sidebar li.active i { color: white; }
+        #menu-deconnexion { margin-top: 30px; border-top: 1px solid #334155; }
+        .main-content { margin-left: 280px; padding: 30px; height: 100%; overflow-y: auto; transition: margin-left 0.3s; }
+        .main-content.expanded { margin-left: 0; }
+        .section { display: none; animation: fadeIn 0.4s; }
+        .section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        h2 { color: #1e293b; margin-bottom: 30px; font-size: 1.8rem; display: flex; align-items: center; justify-content: space-between; border-left: 5px solid #d32f2f; padding-left: 20px; }
+        h2 i { color: #d32f2f; }
+        .btn-excel { background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 12px 24px; border-radius: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 25px; margin-bottom: 30px; }
+        .stat-card { background: white; padding: 25px; border-radius: 24px; box-shadow: 0 10px 30px -12px rgba(0,0,0,0.1); text-align: center; position: relative; }
+        .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #d32f2f, #ef5350); }
+        .stat-card .stat-value { font-size: 2.2rem; font-weight: 800; }
+        .score-high { color: #16a34a; }
+        .score-medium { color: #eab308; }
+        .score-low { color: #dc2626; }
+        .card { background: white; padding: 30px; border-radius: 24px; box-shadow: 0 10px 30px -12px rgba(0,0,0,0.1); margin-bottom: 30px; }
+        .card h3 { color: #1e293b; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; padding-bottom: 15px; border-bottom: 2px solid #e2e8f0; }
+        .card h3 i { color: #d32f2f; }
+        .audit-form { background: white; padding: 35px; border-radius: 24px; max-width: 550px; margin-top: 20px; }
+        .audit-form input, .audit-form select { width: 100%; padding: 14px; margin: 10px 0; border: 2px solid #e2e8f0; border-radius: 14px; }
+        .percentage-container { margin: 20px 0; padding: 15px; background: #f8fafc; border-radius: 16px; border: 2px solid #e2e8f0; }
+        .percentage-label { display: flex; justify-content: space-between; margin-bottom: 12px; }
+        .percentage-value { font-size: 1.5rem; font-weight: 700; padding: 5px 15px; border-radius: 30px; }
+        .percentage-value.high { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; }
+        .percentage-value.medium { background: linear-gradient(135deg, #eab308, #ca8a04); color: white; }
+        .percentage-value.low { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
+        input[type=range] { width: 100%; height: 10px; -webkit-appearance: none; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; border-radius: 50%; background: #d32f2f; cursor: pointer; border: 3px solid white; margin-top: -7px; }
+        .audit-form button { width: 100%; padding: 16px; background: linear-gradient(135deg, #d32f2f, #b71c1c); color: white; border: none; border-radius: 14px; cursor: pointer; margin-top: 20px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 2000; justify-content: center; align-items: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: white; padding: 35px; border-radius: 28px; width: 400px; max-width: 90%; text-align: center; }
+        .modal-content i { font-size: 3rem; color: #d32f2f; margin-bottom: 15px; }
+        .modal-content input { width: 100%; padding: 14px; margin: 15px 0; border: 2px solid #e2e8f0; border-radius: 16px; }
+        .modal-content button { background: linear-gradient(135deg, #d32f2f, #b71c1c); color: white; border: none; padding: 12px; border-radius: 40px; cursor: pointer; width: 100%; }
+        .modal-error { color: #dc2626; font-size: 0.85rem; margin-top: 10px; }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 20px; overflow: hidden; }
+        th { background: linear-gradient(135deg, #1e293b, #0f172a); color: white; padding: 18px 20px; }
+        td { padding: 15px 20px; border-bottom: 1px solid #e2e8f0; }
+        .badge { display: inline-block; padding: 5px 15px; border-radius: 30px; font-weight: 600; }
+        .badge.high { background: #dcfce7; color: #166534; }
+        .badge.medium { background: #fef9c3; color: #854d0e; }
+        .badge.low { background: #fee2e2; color: #991b1b; }
+        .filter-bar { display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; background: white; padding: 20px; border-radius: 20px; align-items: flex-end; }
+        .filter-group { display: flex; flex-direction: column; gap: 5px; }
+        .filter-group label { font-size: 0.8rem; font-weight: 600; color: #64748b; }
+        .filter-bar input, .filter-bar select { padding: 12px 18px; border: 2px solid #e2e8f0; border-radius: 14px; min-width: 160px; }
+        .filter-bar button { padding: 12px 24px; background: linear-gradient(135deg, #d32f2f, #b71c1c); color: white; border: none; border-radius: 14px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px; }
+        .trend-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }
+        .trend-card { background: linear-gradient(135deg, #f8fafc, #f1f5f9); padding: 20px; border-radius: 20px; text-align: center; }
+        .trend-card .trend-value { font-size: 1.8rem; font-weight: 800; margin-top: 10px; }
+        .moyennes-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .moyenne-item { background: linear-gradient(135deg, #f8fafc, #f1f5f9); padding: 20px; border-radius: 20px; text-align: center; }
+        .moyenne-item .value { font-size: 2rem; font-weight: 800; }
         @media (max-width: 768px) {
-            .menu-toggle {
-                display: block;
-            }
-            .sidebar {
-                transform: translateX(-280px);
-            }
-            .sidebar.open {
-                transform: translateX(0);
-            }
-            .main-content {
-                margin-left: 0;
-                padding: 80px 15px 15px 15px;
-            }
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            .login-container {
-                width: 90%;
-                margin: 0 15px;
-                padding: 2rem;
-            }
-            .filter-bar {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .filter-group {
-                width: 100%;
-            }
+            .menu-toggle { display: block; }
+            .sidebar { transform: translateX(-280px); }
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-left: 0; padding: 80px 15px 15px; }
+            .charts-row { grid-template-columns: 1fr; }
+            .trend-stats { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
 </head>
@@ -892,341 +104,98 @@
 
     <div id="loginPage">
         <div class="login-container">
-            <div class="login-logo">
-                <i class="fas fa-clipboard-check"></i>
-            </div>
+            <div class="login-logo"><i class="fas fa-clipboard-check"></i></div>
             <h2>Audit 5S Pro</h2>
             <p>Connectez-vous pour accéder à votre espace d'audit</p>
-            
             <form id="loginForm">
-                <div class="input-group">
-                    <label><i class="fas fa-envelope"></i> Email professionnel</label>
-                    <input type="email" id="email" placeholder="exemple@entreprise.com" required>
-                </div>
-                
-                <div class="input-group">
-                    <label><i class="fas fa-lock"></i> Mot de passe</label>
-                    <input type="password" id="password" placeholder="••••••••" required>
-                </div>
-                
-                <button type="submit">
-                    <i class="fas fa-sign-in-alt"></i>
-                    Se connecter
-                </button>
+                <div class="input-group"><label>Email</label><input type="email" id="email" placeholder="exemple@entreprise.com" required></div>
+                <div class="input-group"><label>Mot de passe</label><input type="password" id="password" placeholder="••••••••" required></div>
+                <button type="submit"><i class="fas fa-sign-in-alt"></i> Se connecter</button>
             </form>
-            
             <div id="loginMessage" class="message"></div>
-            
-            <div class="login-footer">
-                <i class="fas fa-shield-alt"></i>
-                Audit 5S - Version Professionnelle
-            </div>
+            <div class="login-footer"><i class="fas fa-shield-alt"></i> Audit 5S - Version Pro</div>
         </div>
     </div>
 
     <div id="app">
         <div class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <i class="fas fa-clipboard-check"></i>
-                <h3>Audit 5S</h3>
-                <p>Tableau de bord professionnel</p>
-            </div>
+            <div class="sidebar-header"><i class="fas fa-clipboard-check"></i><h3>Audit 5S</h3><p>Tableau de bord</p></div>
             <ul>
-                <li id="menu-dashboard" class="active">
-                    <i class="fas fa-tachometer-alt"></i>
-                    <span>Dashboard 5S</span>
-                </li>
-                <li id="menu-courbes">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Courbes & Tendances</span>
-                </li>
-                <li id="menu-auditLigne">
-                    <i class="fas fa-industry"></i>
-                    <span>Audit 5S Ligne</span>
-                </li>
-                <li id="menu-auditBureau">
-                    <i class="fas fa-building"></i>
-                    <span>Audit 5S Bureau</span>
-                </li>
-                <li id="menu-details">
-                    <i class="fas fa-list-alt"></i>
-                    <span>Détails d'audit</span>
-                </li>
-                <li id="menu-deconnexion">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Déconnexion</span>
-                </li>
+                <li id="menu-dashboard" class="active"><i class="fas fa-tachometer-alt"></i><span>Dashboard 5S</span></li>
+                <li id="menu-courbes"><i class="fas fa-chart-line"></i><span>Courbes & Tendances</span></li>
+                <li id="menu-auditLigne"><i class="fas fa-industry"></i><span>Audit 5S Ligne</span></li>
+                <li id="menu-auditBureau"><i class="fas fa-building"></i><span>Audit 5S Bureau</span></li>
+                <li id="menu-details"><i class="fas fa-list-alt"></i><span>Détails d'audit</span></li>
+                <li id="menu-deconnexion"><i class="fas fa-sign-out-alt"></i><span>Déconnexion</span></li>
             </ul>
         </div>
 
         <div class="main-content" id="mainContent">
             <div id="section-dashboard" class="section active">
-                <h2>
-                    <i class="fas fa-tachometer-alt"></i>
-                    Dashboard 5S
-                </h2>
+                <h2><i class="fas fa-tachometer-alt"></i> Dashboard 5S</h2>
                 <div class="stats-grid" id="dashboardStats"></div>
-                <div class="card">
-                    <h3>
-                        <i class="fas fa-calculator"></i>
-                        Moyennes par secteur
-                    </h3>
-                    <div id="moyennesSecteur" class="moyennes-list"></div>
-                </div>
-                <div class="card">
-                    <h3>
-                        <i class="fas fa-trophy"></i>
-                        Meilleurs et Pires Scores
-                    </h3>
-                    <div id="bestWorstScores" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;"></div>
-                </div>
+                <div class="card"><h3><i class="fas fa-calculator"></i> Moyennes par secteur</h3><div id="moyennesSecteur" class="moyennes-list"></div></div>
+                <div class="card"><h3><i class="fas fa-trophy"></i> Meilleurs et Pires Scores</h3><div id="bestWorstScores" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;"></div></div>
             </div>
 
             <div id="section-courbes" class="section">
-                <h2>
-                    <i class="fas fa-chart-line"></i>
-                    Courbes & Tendances
-                    <button id="exportCourbesBtn" class="btn-excel"><i class="fas fa-file-excel"></i> Exporter les données</button>
-                </h2>
-                
+                <h2><i class="fas fa-chart-line"></i> Courbes & Tendances <button id="exportCourbesBtn" class="btn-excel"><i class="fas fa-file-excel"></i> Exporter</button></h2>
                 <div class="trend-stats" id="trendStats"></div>
-                
                 <div class="filter-bar">
-                    <div class="filter-group">
-                        <label><i class="fas fa-calendar"></i> Période</label>
-                        <select id="filterPeriod">
-                            <option value="month">Par Mois</option>
-                            <option value="week">Par Semaine</option>
-                            <option value="day">Par Jour</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label><i class="fas fa-calendar-week"></i> Semaine</label>
-                        <input type="week" id="filterWeek" placeholder="Semaine">
-                    </div>
-                    <div class="filter-group">
-                        <label><i class="fas fa-calendar-day"></i> Date</label>
-                        <input type="date" id="filterDate">
-                    </div>
-                    <div class="filter-group">
-                        <label><i class="fas fa-filter"></i> UAP</label>
-                        <select id="filterUap">
-                            <option value="">Tous les UAP</option>
-                            <option value="UAP1">UAP1</option>
-                            <option value="UAP2">UAP2</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label><i class="fas fa-industry"></i> Ligne</label>
-                        <select id="filterLigne">
-                            <option value="">Toutes les lignes</option>
-                        </select>
-                    </div>
-                    <button id="applyFilters">
-                        <i class="fas fa-filter"></i>
-                        Appliquer
-                    </button>
-                    <button id="resetFilters">
-                        <i class="fas fa-undo"></i>
-                        Réinitialiser
-                    </button>
+                    <div class="filter-group"><label>Période</label><select id="filterPeriod"><option value="month">Mois</option><option value="week">Semaine</option><option value="day">Jour</option></select></div>
+                    <div class="filter-group"><label>Semaine</label><input type="week" id="filterWeek"></div>
+                    <div class="filter-group"><label>Date</label><input type="date" id="filterDate"></div>
+                    <div class="filter-group"><label>UAP</label><select id="filterUap"><option value="">Tous</option><option value="UAP1">UAP1</option><option value="UAP2">UAP2</option></select></div>
+                    <div class="filter-group"><label>Ligne</label><select id="filterLigne"><option value="">Toutes</option></select></div>
+                    <button id="applyFilters"><i class="fas fa-filter"></i> Appliquer</button>
+                    <button id="resetFilters"><i class="fas fa-undo"></i> Réinitialiser</button>
                 </div>
-                
-                <div class="charts-row">
-                    <div class="card">
-                        <h3>
-                            <i class="fas fa-chart-line"></i>
-                            Évolution UAP1 vs UAP2 (Lignes)
-                        </h3>
-                        <canvas id="chartMoyennes" height="300"></canvas>
-                    </div>
-                    <div class="card">
-                        <h3>
-                            <i class="fas fa-chart-line"></i>
-                            Évolution des audits bureaux
-                        </h3>
-                        <canvas id="chartBureaux" height="300"></canvas>
-                    </div>
-                </div>
-                
-                <div class="charts-row">
-                    <div class="card">
-                        <h3>
-                            <i class="fas fa-chart-line"></i>
-                            Tendance générale & prévision (Lignes)
-                        </h3>
-                        <canvas id="chartTendance" height="300"></canvas>
-                    </div>
-                    <div class="card">
-                        <h3>
-                            <i class="fas fa-chart-line"></i>
-                            Tendance générale bureaux
-                        </h3>
-                        <canvas id="chartTendanceBureaux" height="300"></canvas>
-                    </div>
-                </div>
-                
-                <div class="charts-row">
-                    <div class="card">
-                        <h3>
-                            <i class="fas fa-chart-bar"></i>
-                            Performance par ligne (dernier audit)
-                        </h3>
-                        <canvas id="chartBarresLignes" height="300"></canvas>
-                    </div>
-                    <div class="card">
-                        <h3>
-                            <i class="fas fa-chart-bar"></i>
-                            Performance par service (dernier audit)
-                        </h3>
-                        <canvas id="chartBarresBureaux" height="300"></canvas>
-                    </div>
-                </div>
-                
-                <div class="charts-row">
-                    <div class="card">
-                        <h3>
-                            <i class="fas fa-chart-pie"></i>
-                            Distribution des scores (Lignes)
-                        </h3>
-                        <canvas id="chartDistribution" height="300"></canvas>
-                    </div>
-                    <div class="card">
-                        <h3>
-                            <i class="fas fa-chart-pie"></i>
-                            Distribution des scores (Bureaux)
-                        </h3>
-                        <canvas id="chartDistributionBureaux" height="300"></canvas>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <h3>
-                        <i class="fas fa-table"></i>
-                        Résultats détaillés par ligne
-                    </h3>
-                    <table id="resultatsLignes">
-                        <thead>
-                            <tr>
-                                <th>Ligne</th>
-                                <th>UAP</th>
-                                <th>Moyenne</th>
-                                <th>Dernier score</th>
-                                <th>Évolution</th>
-                                <th>Performance</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-                
-                <div class="card">
-                    <h3>
-                        <i class="fas fa-table"></i>
-                        Résultats détaillés par service (Bureaux)
-                    </h3>
-                    <table id="resultatsBureaux">
-                        <thead>
-                            <tr>
-                                <th>Service</th>
-                                <th>Moyenne</th>
-                                <th>Dernier score</th>
-                                <th>Évolution</th>
-                                <th>Performance</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
+                <div class="charts-row"><div class="card"><h3>Évolution UAP1 vs UAP2</h3><canvas id="chartMoyennes" height="300"></canvas></div><div class="card"><h3>Évolution des audits bureaux</h3><canvas id="chartBureaux" height="300"></canvas></div></div>
+                <div class="charts-row"><div class="card"><h3>Tendance générale lignes</h3><canvas id="chartTendance" height="300"></canvas></div><div class="card"><h3>Tendance générale bureaux</h3><canvas id="chartTendanceBureaux" height="300"></canvas></div></div>
+                <div class="charts-row"><div class="card"><h3>Performance par ligne</h3><canvas id="chartBarresLignes" height="300"></canvas></div><div class="card"><h3>Performance par service</h3><canvas id="chartBarresBureaux" height="300"></canvas></div></div>
+                <div class="charts-row"><div class="card"><h3>Distribution scores lignes</h3><canvas id="chartDistribution" height="300"></canvas></div><div class="card"><h3>Distribution scores bureaux</h3><canvas id="chartDistributionBureaux" height="300"></canvas></div></div>
+                <div class="card"><h3>Résultats détaillés par ligne</h3><table id="resultatsLignes"><thead><tr><th>Ligne</th><th>UAP</th><th>Moyenne</th><th>Dernier score</th><th>Évolution</th><th>Performance</th></tr></thead><tbody></tbody></table></div>
+                <div class="card"><h3>Résultats détaillés par service</h3><table id="resultatsBureaux"><thead><tr><th>Service</th><th>Moyenne</th><th>Dernier score</th><th>Évolution</th><th>Performance</th></tr></thead><tbody></tbody></table></div>
             </div>
 
             <div id="section-auditLigne" class="section">
-                <h2>
-                    <i class="fas fa-industry"></i>
-                    Audit 5S Ligne
-                </h2>
+                <h2><i class="fas fa-industry"></i> Audit 5S Ligne</h2>
                 <div class="audit-form">
-                    <h3>
-                        <i class="fas fa-industry"></i>
-                        Nouvel audit ligne
-                    </h3>
+                    <h3><i class="fas fa-industry"></i> Nouvel audit ligne</h3>
                     <input type="date" id="ligneDate" required>
-                    <select id="ligneUap" required>
-                        <option value="">Sélectionnez l'UAP</option>
-                        <option value="UAP1">UAP1</option>
-                        <option value="UAP2">UAP2</option>
-                    </select>
+                    <select id="ligneUap" required><option value="">UAP</option><option value="UAP1">UAP1</option><option value="UAP2">UAP2</option></select>
                     <input type="text" id="ligneNom" placeholder="Nom de la ligne" required>
-                    
-                    <div class="percentage-container">
-                        <div class="percentage-label">
-                            <span>
-                                <i class="fas fa-chart-pie"></i>
-                                Résultat
-                            </span>
-                            <span class="percentage-value" id="lignePercentageValue">50%</span>
-                        </div>
-                        <input type="range" id="ligneResultat" min="0" max="100" value="50" step="1">
-                    </div>
-                    
-                    <button id="submitLigne">
-                        <i class="fas fa-save"></i>
-                        Enregistrer l'audit
-                    </button>
+                    <div class="percentage-container"><div class="percentage-label"><span>Résultat</span><span class="percentage-value" id="lignePercentageValue">50%</span></div><input type="range" id="ligneResultat" min="0" max="100" value="50" step="1"></div>
+                    <button id="submitLigne"><i class="fas fa-save"></i> Enregistrer l'audit</button>
                 </div>
             </div>
 
             <div id="section-auditBureau" class="section">
-                <h2>
-                    <i class="fas fa-building"></i>
-                    Audit 5S Bureau
-                </h2>
+                <h2><i class="fas fa-building"></i> Audit 5S Bureau</h2>
                 <div class="audit-form">
-                    <h3>
-                        <i class="fas fa-building"></i>
-                        Nouvel audit bureau
-                    </h3>
+                    <h3><i class="fas fa-building"></i> Nouvel audit bureau</h3>
                     <input type="date" id="bureauDate" required>
                     <input type="text" id="bureauService" placeholder="Département / Service" required>
-                    
-                    <div class="percentage-container">
-                        <div class="percentage-label">
-                            <span>
-                                <i class="fas fa-chart-pie"></i>
-                                Résultat
-                            </span>
-                            <span class="percentage-value" id="bureauPercentageValue">50%</span>
-                        </div>
-                        <input type="range" id="bureauResultat" min="0" max="100" value="50" step="1">
-                    </div>
-                    
-                    <button id="submitBureau">
-                        <i class="fas fa-save"></i>
-                        Enregistrer l'audit
-                    </button>
+                    <div class="percentage-container"><div class="percentage-label"><span>Résultat</span><span class="percentage-value" id="bureauPercentageValue">50%</span></div><input type="range" id="bureauResultat" min="0" max="100" value="50" step="1"></div>
+                    <button id="submitBureau"><i class="fas fa-save"></i> Enregistrer l'audit</button>
                 </div>
             </div>
 
             <div id="section-details" class="section">
-                <h2>
-                    <i class="fas fa-history"></i>
-                    Détails des audits
-                    <button id="exportDetailsBtn" class="btn-excel"><i class="fas fa-file-excel"></i> Exporter Excel</button>
-                </h2>
-                <table id="auditsTable">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Type</th>
-                            <th>Secteur</th>
-                            <th>UAP</th>
-                            <th>Résultat</th>
-                            <th>Performance</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
+                <h2><i class="fas fa-history"></i> Détails des audits <button id="exportDetailsBtn" class="btn-excel"><i class="fas fa-file-excel"></i> Exporter</button></h2>
+                <table id="auditsTable"><thead><tr><th>Date</th><th>Type</th><th>Secteur</th><th>UAP</th><th>Résultat</th><th>Performance</th></tr></thead><tbody></tbody></table>
             </div>
+        </div>
+    </div>
+
+    <div id="passwordModal" class="modal">
+        <div class="modal-content">
+            <i class="fas fa-lock"></i>
+            <h3>🔐 Accès sécurisé</h3>
+            <p>Mot de passe requis pour accéder aux audits</p>
+            <input type="password" id="modalPassword" placeholder="Mot de passe">
+            <button id="confirmPasswordBtn">Confirmer</button>
+            <div id="modalError" class="modal-error"></div>
         </div>
     </div>
 
@@ -1246,10 +215,29 @@
                 measurementId: "G-JX8Q07CG6Z",
                 databaseURL: "https://audit-5s-a6416-default-rtdb.firebaseio.com"
             };
-
             firebase.initializeApp(firebaseConfig);
             const auth = firebase.auth();
             const db = firebase.database();
+
+            const AUDIT_PASSWORD = "kpiadmin";
+            let pendingCallback = null;
+
+            const modal = document.getElementById('passwordModal');
+            const modalPasswordInput = document.getElementById('modalPassword');
+            const modalErrorDiv = document.getElementById('modalError');
+            const confirmBtn = document.getElementById('confirmPasswordBtn');
+
+            function closeModal() { modal.classList.remove('active'); modalPasswordInput.value = ''; modalErrorDiv.textContent = ''; }
+            function showPasswordModal(callback) { pendingCallback = callback; modal.classList.add('active'); modalPasswordInput.focus(); modalPasswordInput.value = ''; modalErrorDiv.textContent = ''; }
+            
+            confirmBtn.addEventListener('click', () => {
+                if (modalPasswordInput.value === AUDIT_PASSWORD) {
+                    closeModal();
+                    if (pendingCallback) { pendingCallback(); pendingCallback = null; }
+                } else { modalErrorDiv.textContent = '❌ Mot de passe incorrect. Accès refusé.'; modalPasswordInput.value = ''; }
+            });
+            modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+            modalPasswordInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') confirmBtn.click(); });
 
             const loginPage = document.getElementById('loginPage');
             const appDiv = document.getElementById('app');
@@ -1260,66 +248,19 @@
             const mainContent = document.getElementById('mainContent');
 
             let allAudits = [];
-            let chartInstance = null;
-            let chartBureauxInstance = null;
-            let barChartInstance = null;
-            let barChartBureauxInstance = null;
-            let trendChartInstance = null;
-            let trendChartBureauxInstance = null;
-            let distributionChartInstance = null;
-            let distributionChartBureauxInstance = null;
+            let charts = {};
 
-            function closeSidebarOnMobile() {
-                if (window.innerWidth <= 768) {
-                    sidebar.classList.remove('open');
-                    sidebar.classList.add('closed');
-                    mainContent.classList.add('expanded');
-                }
-            }
-
-            menuToggle.addEventListener('click', () => {
-                sidebar.classList.toggle('open');
-                sidebar.classList.toggle('closed');
-                mainContent.classList.toggle('expanded');
-            });
+            function closeSidebarOnMobile() { if (window.innerWidth <= 768) { sidebar.classList.remove('open'); sidebar.classList.add('closed'); mainContent.classList.add('expanded'); } }
+            menuToggle.addEventListener('click', () => { sidebar.classList.toggle('open'); sidebar.classList.toggle('closed'); mainContent.classList.toggle('expanded'); });
 
             const ligneRange = document.getElementById('ligneResultat');
             const bureauRange = document.getElementById('bureauResultat');
             const lignePercent = document.getElementById('lignePercentageValue');
             const bureauPercent = document.getElementById('bureauPercentageValue');
 
-            function updatePercentageColor(element, value) {
-                element.classList.remove('high', 'medium', 'low');
-                if (value >= 85) {
-                    element.classList.add('high');
-                } else if (value >= 60) {
-                    element.classList.add('medium');
-                } else {
-                    element.classList.add('low');
-                }
-            }
-
-            if (ligneRange) {
-                ligneRange.addEventListener('input', function() {
-                    const value = parseInt(this.value);
-                    lignePercent.textContent = value + '%';
-                    updatePercentageColor(lignePercent, value);
-                    const gradient = `linear-gradient(90deg, ${value >= 85 ? '#22c55e' : (value >= 60 ? '#eab308' : '#ef4444')} 0%, ${value >= 85 ? '#16a34a' : (value >= 60 ? '#ca8a04' : '#dc2626')} ${value}%, #e2e8f0 ${value}%, #e2e8f0 100%)`;
-                    this.style.background = gradient;
-                });
-                ligneRange.dispatchEvent(new Event('input'));
-            }
-
-            if (bureauRange) {
-                bureauRange.addEventListener('input', function() {
-                    const value = parseInt(this.value);
-                    bureauPercent.textContent = value + '%';
-                    updatePercentageColor(bureauPercent, value);
-                    const gradient = `linear-gradient(90deg, ${value >= 85 ? '#22c55e' : (value >= 60 ? '#eab308' : '#ef4444')} 0%, ${value >= 85 ? '#16a34a' : (value >= 60 ? '#ca8a04' : '#dc2626')} ${value}%, #e2e8f0 ${value}%, #e2e8f0 100%)`;
-                    this.style.background = gradient;
-                });
-                bureauRange.dispatchEvent(new Event('input'));
-            }
+            function updatePercentageColor(el, v) { el.classList.remove('high','medium','low'); if (v >= 85) el.classList.add('high'); else if (v >= 60) el.classList.add('medium'); else el.classList.add('low'); }
+            if (ligneRange) { ligneRange.addEventListener('input', function() { let v = parseInt(this.value); lignePercent.textContent = v+'%'; updatePercentageColor(lignePercent, v); }); ligneRange.dispatchEvent(new Event('input')); }
+            if (bureauRange) { bureauRange.addEventListener('input', function() { let v = parseInt(this.value); bureauPercent.textContent = v+'%'; updatePercentageColor(bureauPercent, v); }); bureauRange.dispatchEvent(new Event('input')); }
 
             const menuItems = {
                 dashboard: document.getElementById('menu-dashboard'),
@@ -1337,860 +278,230 @@
             };
 
             function setActiveMenu(activeId) {
-                Object.keys(menuItems).forEach(key => {
-                    if (menuItems[key]) menuItems[key].classList.remove('active');
-                });
-                const activeMenu = document.getElementById(`menu-${activeId}`);
-                if (activeMenu) activeMenu.classList.add('active');
-
-                Object.keys(sections).forEach(key => {
-                    if (sections[key]) sections[key].classList.remove('active');
-                });
-                const activeSection = document.getElementById(`section-${activeId}`);
-                if (activeSection) activeSection.classList.add('active');
+                Object.keys(menuItems).forEach(k => menuItems[k]?.classList.remove('active'));
+                if (menuItems[activeId]) menuItems[activeId].classList.add('active');
+                Object.keys(sections).forEach(k => sections[k]?.classList.remove('active'));
+                if (sections[activeId]) sections[activeId].classList.add('active');
                 closeSidebarOnMobile();
             }
 
             menuItems.dashboard.addEventListener('click', () => setActiveMenu('dashboard'));
             menuItems.courbes.addEventListener('click', () => setActiveMenu('courbes'));
-            menuItems.auditLigne.addEventListener('click', () => setActiveMenu('auditLigne'));
-            menuItems.auditBureau.addEventListener('click', () => setActiveMenu('auditBureau'));
             menuItems.details.addEventListener('click', () => setActiveMenu('details'));
+            menuItems.auditLigne.addEventListener('click', () => showPasswordModal(() => setActiveMenu('auditLigne')));
+            menuItems.auditBureau.addEventListener('click', () => showPasswordModal(() => setActiveMenu('auditBureau')));
             document.getElementById('menu-deconnexion').addEventListener('click', () => auth.signOut());
 
             loginForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const email = document.getElementById('email').value;
                 const password = document.getElementById('password').value;
-                loginMessage.textContent = 'Connexion en cours...';
+                loginMessage.textContent = 'Connexion...';
                 loginMessage.className = 'message';
-                
-                auth.signInWithEmailAndPassword(email, password)
-                    .then(() => {
-                        loginMessage.textContent = '';
-                    })
-                    .catch(error => {
-                        loginMessage.textContent = '❌ ' + error.message;
-                        loginMessage.classList.add('error');
-                    });
+                auth.signInWithEmailAndPassword(email, password).then(() => loginMessage.textContent = '').catch(error => { loginMessage.textContent = '❌ ' + error.message; loginMessage.classList.add('error'); });
             });
 
-            auth.onAuthStateChanged(user => {
-                if (user) {
-                    loginPage.style.display = 'none';
-                    appDiv.style.display = 'block';
-                    loadAllData();
-                } else {
-                    loginPage.style.display = 'flex';
-                    appDiv.style.display = 'none';
-                }
+            auth.onAuthStateChanged(user => { if (user) { loginPage.style.display = 'none'; appDiv.style.display = 'block'; loadAllData(); } else { loginPage.style.display = 'flex'; appDiv.style.display = 'none'; } });
+
+            function getPerformanceClass(score) { return score >= 85 ? 'high' : (score >= 60 ? 'medium' : 'low'); }
+            function getPerformanceLabel(score) { if(score>=85) return 'Excellent'; if(score>=70) return 'Bon'; if(score>=60) return 'Moyen'; if(score>=40) return 'Faible'; return 'Critique'; }
+            function getScoreColorClass(score) { return score >= 85 ? 'score-high' : (score >= 60 ? 'score-medium' : 'score-low'); }
+            function moyenne(arr) { return arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : 0; }
+
+            document.getElementById('submitLigne').addEventListener('click', () => {
+                showPasswordModal(() => {
+                    const date = document.getElementById('ligneDate').value;
+                    const uap = document.getElementById('ligneUap').value;
+                    const ligne = document.getElementById('ligneNom').value.trim();
+                    const resultat = parseInt(document.getElementById('ligneResultat').value);
+                    if (!date || !uap || !ligne || isNaN(resultat)) { alert('Veuillez remplir tous les champs'); return; }
+                    db.ref('audits').push({ type: 'ligne', date, uap, secteur: ligne, resultat, timestamp: firebase.database.ServerValue.TIMESTAMP }).then(() => {
+                        const btn = document.getElementById('submitLigne');
+                        btn.innerHTML = '<i class="fas fa-check"></i> Enregistré !';
+                        btn.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
+                        setTimeout(() => { btn.innerHTML = '<i class="fas fa-save"></i> Enregistrer'; btn.style.background = 'linear-gradient(135deg, #d32f2f, #b71c1c)'; }, 2000);
+                        document.getElementById('ligneDate').value = ''; document.getElementById('ligneUap').value = ''; document.getElementById('ligneNom').value = ''; document.getElementById('ligneResultat').value = 50;
+                        ligneRange.dispatchEvent(new Event('input'));
+                    }).catch(error => alert('Erreur: ' + error.message));
+                });
             });
 
-            function getPerformanceClass(score) {
-                if (score >= 85) return 'high';
-                if (score >= 60) return 'medium';
-                return 'low';
-            }
+            document.getElementById('submitBureau').addEventListener('click', () => {
+                showPasswordModal(() => {
+                    const date = document.getElementById('bureauDate').value;
+                    const service = document.getElementById('bureauService').value.trim();
+                    const resultat = parseInt(document.getElementById('bureauResultat').value);
+                    if (!date || !service || isNaN(resultat)) { alert('Veuillez remplir tous les champs'); return; }
+                    db.ref('audits').push({ type: 'bureau', date, secteur: service, resultat, timestamp: firebase.database.ServerValue.TIMESTAMP }).then(() => {
+                        const btn = document.getElementById('submitBureau');
+                        btn.innerHTML = '<i class="fas fa-check"></i> Enregistré !';
+                        btn.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
+                        setTimeout(() => { btn.innerHTML = '<i class="fas fa-save"></i> Enregistrer'; btn.style.background = 'linear-gradient(135deg, #d32f2f, #b71c1c)'; }, 2000);
+                        document.getElementById('bureauDate').value = ''; document.getElementById('bureauService').value = ''; document.getElementById('bureauResultat').value = 50;
+                        bureauRange.dispatchEvent(new Event('input'));
+                    }).catch(error => alert('Erreur: ' + error.message));
+                });
+            });
 
-            function getPerformanceLabel(score) {
-                if (score >= 85) return 'Excellent';
-                if (score >= 70) return 'Bon';
-                if (score >= 60) return 'Moyen';
-                if (score >= 40) return 'Faible';
-                return 'Critique';
-            }
-
-            function getScoreColorClass(score) {
-                if (score >= 85) return 'score-high';
-                if (score >= 60) return 'score-medium';
-                return 'score-low';
-            }
-
-            function moyenne(arr) {
-                if (arr.length === 0) return 0;
-                const sum = arr.reduce((acc, val) => acc + val, 0);
-                return sum / arr.length;
+            function updateDashboard(audits) {
+                const ligneAudits = audits.filter(a => a.type === 'ligne');
+                const bureauAudits = audits.filter(a => a.type === 'bureau');
+                const bestLigne = ligneAudits.reduce((b, a) => a.resultat > b.score ? {score: a.resultat, secteur: a.secteur} : b, {score: -1, secteur: ''});
+                const worstLigne = ligneAudits.reduce((w, a) => a.resultat < w.score ? {score: a.resultat, secteur: a.secteur} : w, {score: 101, secteur: ''});
+                const bestBureau = bureauAudits.reduce((b, a) => a.resultat > b.score ? {score: a.resultat, secteur: a.secteur} : b, {score: -1, secteur: ''});
+                const worstBureau = bureauAudits.reduce((w, a) => a.resultat < w.score ? {score: a.resultat, secteur: a.secteur} : w, {score: 101, secteur: ''});
+                const moyUAP1 = moyenne(ligneAudits.filter(a => a.uap === 'UAP1').map(a => a.resultat));
+                const moyUAP2 = moyenne(ligneAudits.filter(a => a.uap === 'UAP2').map(a => a.resultat));
+                const moyUsine = moyenne(ligneAudits.map(a => a.resultat));
+                const moyBureaux = moyenne(bureauAudits.map(a => a.resultat));
+                document.getElementById('dashboardStats').innerHTML = `<div class="stat-card"><div class="stat-value">${audits.length}</div><div class="stat-label">Audits réalisés</div></div><div class="stat-card"><div class="stat-value ${getScoreColorClass(bestLigne.score)}">${bestLigne.score}%</div><div class="stat-label">Meilleur score ligne</div><div>${bestLigne.secteur || '-'}</div></div><div class="stat-card"><div class="stat-value ${getScoreColorClass(worstLigne.score)}">${worstLigne.score}%</div><div class="stat-label">Pire score ligne</div><div>${worstLigne.secteur || '-'}</div></div><div class="stat-card"><div class="stat-value ${getScoreColorClass(bestBureau.score)}">${bestBureau.score}%</div><div class="stat-label">Meilleur score bureau</div><div>${bestBureau.secteur || '-'}</div></div><div class="stat-card"><div class="stat-value ${getScoreColorClass(worstBureau.score)}">${worstBureau.score}%</div><div class="stat-label">Pire score bureau</div><div>${worstBureau.secteur || '-'}</div></div>`;
+                document.getElementById('moyennesSecteur').innerHTML = `<div class="moyenne-item"><strong>UAP1</strong><div class="value ${getScoreColorClass(moyUAP1)}">${moyUAP1.toFixed(1)}%</div></div><div class="moyenne-item"><strong>UAP2</strong><div class="value ${getScoreColorClass(moyUAP2)}">${moyUAP2.toFixed(1)}%</div></div><div class="moyenne-item"><strong>Usine</strong><div class="value ${getScoreColorClass(moyUsine)}">${moyUsine.toFixed(1)}%</div></div><div class="moyenne-item"><strong>Bureaux</strong><div class="value ${getScoreColorClass(moyBureaux)}">${moyBureaux.toFixed(1)}%</div></div>`;
+                document.getElementById('bestWorstScores').innerHTML = `<div class="moyenne-item"><strong>🏆 Meilleur Ligne</strong><div class="value ${getScoreColorClass(bestLigne.score)}">${bestLigne.score}%</div><div>${bestLigne.secteur || '-'}</div></div><div class="moyenne-item"><strong>⚠️ Pire Ligne</strong><div class="value ${getScoreColorClass(worstLigne.score)}">${worstLigne.score}%</div><div>${worstLigne.secteur || '-'}</div></div><div class="moyenne-item"><strong>🏢 Meilleur Bureau</strong><div class="value ${getScoreColorClass(bestBureau.score)}">${bestBureau.score}%</div><div>${bestBureau.secteur || '-'}</div></div><div class="moyenne-item"><strong>⚠️ Pire Bureau</strong><div class="value ${getScoreColorClass(worstBureau.score)}">${worstBureau.score}%</div><div>${worstBureau.secteur || '-'}</div></div>`;
             }
 
             function filterAuditsByFilters(audits) {
-                let filtered = [...audits];
+                let f = [...audits];
                 const week = document.getElementById('filterWeek')?.value;
                 const date = document.getElementById('filterDate')?.value;
                 const uap = document.getElementById('filterUap')?.value;
                 const ligne = document.getElementById('filterLigne')?.value;
+                if (week) f = f.filter(a => { if (!a.date) return false; const ad = new Date(a.date), ws = new Date(week), we = new Date(week); we.setDate(we.getDate()+7); return ad >= ws && ad < we; });
+                else if (date) f = f.filter(a => a.date === date);
+                if (uap) f = f.filter(a => a.uap === uap);
+                if (ligne) f = f.filter(a => a.secteur === ligne);
+                return f;
+            }
 
-                if (week) {
-                    filtered = filtered.filter(a => {
-                        if (!a.date) return false;
-                        const auditDate = new Date(a.date);
-                        const weekStart = new Date(week);
-                        const weekEnd = new Date(week);
-                        weekEnd.setDate(weekEnd.getDate() + 7);
-                        return auditDate >= weekStart && auditDate < weekEnd;
-                    });
-                } else if (date) {
-                    filtered = filtered.filter(a => a.date === date);
+            function updateTrendStats(audits) {
+                const la = audits.filter(a => a.type === 'ligne'), ba = audits.filter(a => a.type === 'bureau');
+                const ml = moyenne(la.map(a => a.resultat)), mb = moyenne(ba.map(a => a.resultat));
+                document.getElementById('trendStats').innerHTML = `<div class="trend-card"><i class="fas fa-industry"></i><div>Moyenne lignes</div><div class="trend-value ${getScoreColorClass(ml)}">${ml.toFixed(1)}%</div></div><div class="trend-card"><i class="fas fa-building"></i><div>Moyenne bureaux</div><div class="trend-value ${getScoreColorClass(mb)}">${mb.toFixed(1)}%</div></div><div class="trend-card"><i class="fas fa-chart-line"></i><div>Total audits lignes</div><div class="trend-value">${la.length}</div></div><div class="trend-card"><i class="fas fa-chart-line"></i><div>Total audits bureaux</div><div class="trend-value">${ba.length}</div></div>`;
+            }
+
+            function updateAllCharts(audits) {
+                const filtered = filterAuditsByFilters(audits);
+                updateTrendStats(audits);
+                
+                const groupesLignes = {}, allScoresLignes = [];
+                filtered.filter(a => a.type === 'ligne').forEach(a => {
+                    if (!a.date) return;
+                    const d = new Date(a.date);
+                    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+                    if (!groupesLignes[key]) groupesLignes[key] = { uap1: [], uap2: [], all: [] };
+                    if (a.uap === 'UAP1') groupesLignes[key].uap1.push(a.resultat);
+                    else if (a.uap === 'UAP2') groupesLignes[key].uap2.push(a.resultat);
+                    groupesLignes[key].all.push(a.resultat);
+                    allScoresLignes.push(a.resultat);
+                });
+                const labels = Object.keys(groupesLignes).sort();
+                const dataUAP1 = labels.map(l => moyenne(groupesLignes[l].uap1));
+                const dataUAP2 = labels.map(l => moyenne(groupesLignes[l].uap2));
+                const dataAll = labels.map(l => moyenne(groupesLignes[l].all));
+                
+                if (charts.chartMoyennes) charts.chartMoyennes.destroy();
+                charts.chartMoyennes = new Chart(document.getElementById('chartMoyennes'), { type: 'line', data: { labels, datasets: [{ label: 'UAP1', data: dataUAP1, borderColor: '#3b82f6', tension: 0.4 }, { label: 'UAP2', data: dataUAP2, borderColor: '#8b5cf6', tension: 0.4 }] }, options: { scales: { y: { max: 100 } } } });
+                if (charts.chartTendance) charts.chartTendance.destroy();
+                charts.chartTendance = new Chart(document.getElementById('chartTendance'), { type: 'line', data: { labels, datasets: [{ label: 'Moyenne lignes', data: dataAll, borderColor: '#d32f2f', tension: 0.3 }] }, options: { scales: { y: { max: 100 } } } });
+                
+                const ranges = { 'Excellent':0, 'Bon':0, 'Moyen':0, 'Faible':0, 'Critique':0 };
+                allScoresLignes.forEach(s => { if(s>=85) ranges['Excellent']++; else if(s>=70) ranges['Bon']++; else if(s>=60) ranges['Moyen']++; else if(s>=40) ranges['Faible']++; else ranges['Critique']++; });
+                if (charts.chartDistribution) charts.chartDistribution.destroy();
+                charts.chartDistribution = new Chart(document.getElementById('chartDistribution'), { type: 'pie', data: { labels: Object.keys(ranges), datasets: [{ data: Object.values(ranges), backgroundColor: ['#22c55e','#84cc16','#eab308','#f97316','#ef4444'] }] } });
+                
+                const groupesBureaux = {}, allScoresBureaux = [];
+                filtered.filter(a => a.type === 'bureau').forEach(a => {
+                    if (!a.date) return;
+                    const d = new Date(a.date);
+                    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+                    if (!groupesBureaux[key]) groupesBureaux[key] = [];
+                    groupesBureaux[key].push(a.resultat);
+                    allScoresBureaux.push(a.resultat);
+                });
+                const labelsB = Object.keys(groupesBureaux).sort();
+                const dataB = labelsB.map(l => moyenne(groupesBureaux[l]));
+                if (charts.chartBureaux) charts.chartBureaux.destroy();
+                charts.chartBureaux = new Chart(document.getElementById('chartBureaux'), { type: 'line', data: { labels: labelsB, datasets: [{ label: 'Moyenne bureaux', data: dataB, borderColor: '#10b981', tension: 0.4 }] }, options: { scales: { y: { max: 100 } } } });
+                if (charts.chartTendanceBureaux) charts.chartTendanceBureaux.destroy();
+                charts.chartTendanceBureaux = new Chart(document.getElementById('chartTendanceBureaux'), { type: 'line', data: { labels: labelsB, datasets: [{ label: 'Moyenne bureaux', data: dataB, borderColor: '#d32f2f', tension: 0.3 }] }, options: { scales: { y: { max: 100 } } } });
+                const rangesB = { 'Excellent':0, 'Bon':0, 'Moyen':0, 'Faible':0, 'Critique':0 };
+                allScoresBureaux.forEach(s => { if(s>=85) rangesB['Excellent']++; else if(s>=70) rangesB['Bon']++; else if(s>=60) rangesB['Moyen']++; else if(s>=40) rangesB['Faible']++; else rangesB['Critique']++; });
+                if (charts.chartDistributionBureaux) charts.chartDistributionBureaux.destroy();
+                charts.chartDistributionBureaux = new Chart(document.getElementById('chartDistributionBureaux'), { type: 'pie', data: { labels: Object.keys(rangesB), datasets: [{ data: Object.values(rangesB), backgroundColor: ['#22c55e','#84cc16','#eab308','#f97316','#ef4444'] }] } });
+                
+                const ligneMap = new Map();
+                filtered.filter(a => a.type === 'ligne' && a.secteur).forEach(a => { const cur = ligneMap.get(a.secteur); if (!cur || new Date(a.date) > new Date(cur.date)) ligneMap.set(a.secteur, { score: a.resultat, date: a.date, uap: a.uap }); });
+                const labelsL = Array.from(ligneMap.keys()), scoresL = labelsL.map(l => ligneMap.get(l).score), colorsL = scoresL.map(s => s>=85?'#22c55e':(s>=60?'#eab308':'#ef4444'));
+                if (charts.chartBarresLignes) charts.chartBarresLignes.destroy();
+                charts.chartBarresLignes = new Chart(document.getElementById('chartBarresLignes'), { type: 'bar', data: { labels: labelsL, datasets: [{ label: 'Dernier score', data: scoresL, backgroundColor: colorsL }] }, options: { scales: { y: { max: 100 } } } });
+                
+                const bureauMap = new Map();
+                filtered.filter(a => a.type === 'bureau' && a.secteur).forEach(a => { const cur = bureauMap.get(a.secteur); if (!cur || new Date(a.date) > new Date(cur.date)) bureauMap.set(a.secteur, { score: a.resultat, date: a.date }); });
+                const labelsBureau = Array.from(bureauMap.keys()), scoresBureau = labelsBureau.map(l => bureauMap.get(l).score), colorsB = scoresBureau.map(s => s>=85?'#22c55e':(s>=60?'#eab308':'#ef4444'));
+                if (charts.chartBarresBureaux) charts.chartBarresBureaux.destroy();
+                charts.chartBarresBureaux = new Chart(document.getElementById('chartBarresBureaux'), { type: 'bar', data: { labels: labelsBureau, datasets: [{ label: 'Dernier score', data: scoresBureau, backgroundColor: colorsB }] }, options: { scales: { y: { max: 100 } } } });
+                
+                updateLignesTable(filtered);
+                updateBureauxTable(filtered);
+            }
+
+            function updateLignesTable(audits) {
+                const map = new Map();
+                audits.filter(a => a.type === 'ligne' && a.secteur).forEach(a => { if (!map.has(a.secteur)) map.set(a.secteur, []); map.get(a.secteur).push({ resultat: a.resultat, date: a.date, uap: a.uap }); });
+                let html = '';
+                for (let [ligne, vals] of map.entries()) {
+                    const sorted = vals.sort((a,b) => new Date(b.date) - new Date(a.date));
+                    const moy = moyenne(sorted.map(v => v.resultat)), dernier = sorted[0], avant = sorted[1];
+                    let evo = '-', evoC = '#64748b';
+                    if (avant) { const diff = dernier.resultat - avant.resultat; if (diff > 0) { evo = `+${diff}%`; evoC = '#22c55e'; } else if (diff < 0) { evo = `${diff}%`; evoC = '#ef4444'; } else evo = '0%'; }
+                    const uapIcon = dernier.uap === 'UAP1' ? '<span style="color:#3b82f6">🔵 UAP1</span>' : '<span style="color:#8b5cf6">🟣 UAP2</span>';
+                    html += `<tr><td><strong>${ligne}</strong></td><td>${uapIcon}</td><td><span class="badge ${getPerformanceClass(moy)}">${moy.toFixed(1)}%</span></td><td class="${getScoreColorClass(dernier.resultat)}">${dernier.resultat}%</td><td style="color:${evoC}">${evo}</td><td><span class="badge ${getPerformanceClass(dernier.resultat)}">${getPerformanceLabel(dernier.resultat)}</span></td></tr>`;
                 }
+                document.querySelector('#resultatsLignes tbody').innerHTML = html || '<tr><td colspan="6">Aucune donnée</td></tr>';
+            }
 
-                if (uap) {
-                    filtered = filtered.filter(a => a.uap === uap);
+            function updateBureauxTable(audits) {
+                const map = new Map();
+                audits.filter(a => a.type === 'bureau' && a.secteur).forEach(a => { if (!map.has(a.secteur)) map.set(a.secteur, []); map.get(a.secteur).push({ resultat: a.resultat, date: a.date }); });
+                let html = '';
+                for (let [serv, vals] of map.entries()) {
+                    const sorted = vals.sort((a,b) => new Date(b.date) - new Date(a.date));
+                    const moy = moyenne(sorted.map(v => v.resultat)), dernier = sorted[0], avant = sorted[1];
+                    let evo = '-', evoC = '#64748b';
+                    if (avant) { const diff = dernier.resultat - avant.resultat; if (diff > 0) { evo = `+${diff}%`; evoC = '#22c55e'; } else if (diff < 0) { evo = `${diff}%`; evoC = '#ef4444'; } else evo = '0%'; }
+                    html += `<tr><td><strong>${serv}</strong></td><td><span class="badge ${getPerformanceClass(moy)}">${moy.toFixed(1)}%</span></td><td class="${getScoreColorClass(dernier.resultat)}">${dernier.resultat}%</td><td style="color:${evoC}">${evo}</td><td><span class="badge ${getPerformanceClass(dernier.resultat)}">${getPerformanceLabel(dernier.resultat)}</span></td></tr>`;
                 }
+                document.querySelector('#resultatsBureaux tbody').innerHTML = html || '<tr><td colspan="5">Aucune donnée</td></tr>';
+            }
 
-                if (ligne) {
-                    filtered = filtered.filter(a => a.secteur === ligne);
-                }
-
-                return filtered;
+            function updateDetails(audits) {
+                const sorted = [...audits].sort((a,b) => new Date(b.date) - new Date(a.date));
+                let html = '';
+                sorted.forEach(a => { html += `<tr><td>${a.date ? new Date(a.date).toLocaleDateString('fr-FR') : ''}</td><td>${a.type === 'ligne' ? 'Ligne' : 'Bureau'}</td><td>${a.secteur || '-'}</td><td>${a.uap || '-'}</td><td class="${getScoreColorClass(a.resultat)}">${a.resultat}%</td><td><span class="badge ${getPerformanceClass(a.resultat)}">${getPerformanceLabel(a.resultat)}</span></td></tr>`; });
+                document.querySelector('#auditsTable tbody').innerHTML = html || '<tr><td colspan="6">Aucun audit</td></tr>';
             }
 
             function updateLigneFilterOptions(audits) {
                 const lignes = [...new Set(audits.filter(a => a.type === 'ligne' && a.secteur).map(a => a.secteur))];
-                const select = document.getElementById('filterLigne');
-                if (select) {
-                    const currentValue = select.value;
-                    select.innerHTML = '<option value="">Toutes les lignes</option>';
-                    lignes.sort().forEach(ligne => {
-                        select.innerHTML += `<option value="${ligne}">${ligne}</option>`;
-                    });
-                    if (currentValue && lignes.includes(currentValue)) select.value = currentValue;
-                }
-            }
-
-            function updateDashboard(audits) {
-                const nbAudits = audits.length;
-                const ligneAudits = audits.filter(a => a.type === 'ligne');
-                const bureauAudits = audits.filter(a => a.type === 'bureau');
-
-                // Meilleurs et pires scores pour les lignes
-                let bestLigne = { score: -1, secteur: '' };
-                let worstLigne = { score: 101, secteur: '' };
-                ligneAudits.forEach(a => {
-                    if (a.resultat > bestLigne.score) bestLigne = { score: a.resultat, secteur: a.secteur };
-                    if (a.resultat < worstLigne.score) worstLigne = { score: a.resultat, secteur: a.secteur };
-                });
-
-                // Meilleurs et pires scores pour les bureaux
-                let bestBureau = { score: -1, secteur: '' };
-                let worstBureau = { score: 101, secteur: '' };
-                bureauAudits.forEach(a => {
-                    if (a.resultat > bestBureau.score) bestBureau = { score: a.resultat, secteur: a.secteur };
-                    if (a.resultat < worstBureau.score) worstBureau = { score: a.resultat, secteur: a.secteur };
-                });
-
-                const moyLigneUAP1 = moyenne(ligneAudits.filter(a => a.uap === 'UAP1').map(a => a.resultat));
-                const moyLigneUAP2 = moyenne(ligneAudits.filter(a => a.uap === 'UAP2').map(a => a.resultat));
-                const moyUsine = moyenne(ligneAudits.map(a => a.resultat));
-                const moyBureaux = moyenne(bureauAudits.map(a => a.resultat));
-
-                document.getElementById('dashboardStats').innerHTML = `
-                    <div class="stat-card">
-                        <div class="stat-icon"><i class="fas fa-chart-bar" style="color: #3b82f6;"></i></div>
-                        <div class="stat-value">${nbAudits}</div>
-                        <div class="stat-label">Audits réalisés</div>
-                        <div class="stat-sub">au total</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon"><i class="fas fa-trophy" style="color: #f59e0b;"></i></div>
-                        <div class="stat-value ${getScoreColorClass(bestLigne.score)}">${bestLigne.score}%</div>
-                        <div class="stat-label">Meilleur score ligne</div>
-                        <div class="stat-sub">${bestLigne.secteur || '-'}</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon"><i class="fas fa-exclamation-triangle" style="color: #ef4444;"></i></div>
-                        <div class="stat-value ${getScoreColorClass(worstLigne.score)}">${worstLigne.score}%</div>
-                        <div class="stat-label">Pire score ligne</div>
-                        <div class="stat-sub">${worstLigne.secteur || '-'}</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon"><i class="fas fa-building" style="color: #10b981;"></i></div>
-                        <div class="stat-value ${getScoreColorClass(bestBureau.score)}">${bestBureau.score}%</div>
-                        <div class="stat-label">Meilleur score bureau</div>
-                        <div class="stat-sub">${bestBureau.secteur || '-'}</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon"><i class="fas fa-exclamation-circle" style="color: #ef4444;"></i></div>
-                        <div class="stat-value ${getScoreColorClass(worstBureau.score)}">${worstBureau.score}%</div>
-                        <div class="stat-label">Pire score bureau</div>
-                        <div class="stat-sub">${worstBureau.secteur || '-'}</div>
-                    </div>
-                `;
-
-                document.getElementById('moyennesSecteur').innerHTML = `
-                    <div class="moyenne-item">
-                        <strong><i class="fas fa-chart-line" style="color: #3b82f6;"></i> UAP1</strong>
-                        <div class="value ${getScoreColorClass(moyLigneUAP1)}">${moyLigneUAP1.toFixed(1)}%</div>
-                    </div>
-                    <div class="moyenne-item">
-                        <strong><i class="fas fa-chart-line" style="color: #8b5cf6;"></i> UAP2</strong>
-                        <div class="value ${getScoreColorClass(moyLigneUAP2)}">${moyLigneUAP2.toFixed(1)}%</div>
-                    </div>
-                    <div class="moyenne-item">
-                        <strong><i class="fas fa-industry"></i> Usine</strong>
-                        <div class="value ${getScoreColorClass(moyUsine)}">${moyUsine.toFixed(1)}%</div>
-                    </div>
-                    <div class="moyenne-item">
-                        <strong><i class="fas fa-building"></i> Bureaux</strong>
-                        <div class="value ${getScoreColorClass(moyBureaux)}">${moyBureaux.toFixed(1)}%</div>
-                    </div>
-                `;
-
-                // Nouvelle section Meilleurs et Pires Scores
-                document.getElementById('bestWorstScores').innerHTML = `
-                    <div class="moyenne-item" style="background: linear-gradient(135deg, #fef9c3, #fef3c7);">
-                        <strong><i class="fas fa-trophy" style="color: #f59e0b;"></i> Meilleur score Ligne</strong>
-                        <div class="value ${getScoreColorClass(bestLigne.score)}">${bestLigne.score}%</div>
-                        <div class="stat-sub" style="font-size: 0.9rem; margin-top: 8px;">${bestLigne.secteur || 'Aucune donnée'}</div>
-                    </div>
-                    <div class="moyenne-item" style="background: linear-gradient(135deg, #fee2e2, #fecaca);">
-                        <strong><i class="fas fa-exclamation-triangle" style="color: #ef4444;"></i> Pire score Ligne</strong>
-                        <div class="value ${getScoreColorClass(worstLigne.score)}">${worstLigne.score}%</div>
-                        <div class="stat-sub" style="font-size: 0.9rem; margin-top: 8px;">${worstLigne.secteur || 'Aucune donnée'}</div>
-                    </div>
-                    <div class="moyenne-item" style="background: linear-gradient(135deg, #d1fae5, #a7f3d0);">
-                        <strong><i class="fas fa-building" style="color: #10b981;"></i> Meilleur score Bureau</strong>
-                        <div class="value ${getScoreColorClass(bestBureau.score)}">${bestBureau.score}%</div>
-                        <div class="stat-sub" style="font-size: 0.9rem; margin-top: 8px;">${bestBureau.secteur || 'Aucune donnée'}</div>
-                    </div>
-                    <div class="moyenne-item" style="background: linear-gradient(135deg, #fed7aa, #fdba74);">
-                        <strong><i class="fas fa-exclamation-circle" style="color: #f97316;"></i> Pire score Bureau</strong>
-                        <div class="value ${getScoreColorClass(worstBureau.score)}">${worstBureau.score}%</div>
-                        <div class="stat-sub" style="font-size: 0.9rem; margin-top: 8px;">${worstBureau.secteur || 'Aucune donnée'}</div>
-                    </div>
-                `;
-            }
-
-            function updateCourbes(audits) {
-                const filteredAudits = filterAuditsByFilters(audits);
-                const period = document.getElementById('filterPeriod')?.value || 'month';
-                
-                updateTrendStats(audits);
-                
-                // Courbes pour les lignes
-                const groupesLignes = {};
-                const allScoresLignes = [];
-                
-                filteredAudits.filter(a => a.type === 'ligne').forEach(a => {
-                    if (!a.date) return;
-                    const d = new Date(a.date);
-                    let key;
-                    if (period === 'day') {
-                        key = d.toISOString().split('T')[0];
-                    } else if (period === 'week') {
-                        const weekStart = new Date(d);
-                        weekStart.setDate(d.getDate() - d.getDay());
-                        key = weekStart.toISOString().split('T')[0];
-                    } else {
-                        key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
-                    }
-                    
-                    if (!groupesLignes[key]) {
-                        groupesLignes[key] = { uap1: [], uap2: [], all: [] };
-                    }
-                    if (a.uap === 'UAP1') {
-                        groupesLignes[key].uap1.push(a.resultat);
-                    } else if (a.uap === 'UAP2') {
-                        groupesLignes[key].uap2.push(a.resultat);
-                    }
-                    groupesLignes[key].all.push(a.resultat);
-                    allScoresLignes.push(a.resultat);
-                });
-                
-                const labelsLignes = Object.keys(groupesLignes).sort();
-                const dataUAP1 = labelsLignes.map(l => moyenne(groupesLignes[l].uap1));
-                const dataUAP2 = labelsLignes.map(l => moyenne(groupesLignes[l].uap2));
-                const dataAllLignes = labelsLignes.map(l => moyenne(groupesLignes[l].all));
-                
-                const ctx = document.getElementById('chartMoyennes').getContext('2d');
-                if (chartInstance) chartInstance.destroy();
-                chartInstance = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: labelsLignes,
-                        datasets: [
-                            { 
-                                label: 'UAP1', 
-                                data: dataUAP1, 
-                                borderColor: '#3b82f6', 
-                                backgroundColor: 'rgba(59,130,246,0.1)', 
-                                tension: 0.4,
-                                borderWidth: 3,
-                                pointBackgroundColor: '#3b82f6',
-                                pointRadius: 4,
-                                fill: true
-                            },
-                            { 
-                                label: 'UAP2', 
-                                data: dataUAP2, 
-                                borderColor: '#8b5cf6', 
-                                backgroundColor: 'rgba(139,92,246,0.1)', 
-                                tension: 0.4,
-                                borderWidth: 3,
-                                pointBackgroundColor: '#8b5cf6',
-                                pointRadius: 4,
-                                fill: true
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: true,
-                        plugins: { 
-                            legend: { position: 'top' },
-                            tooltip: { callbacks: { label: function(context) { return context.dataset.label + ': ' + context.raw.toFixed(1) + '%'; } } }
-                        },
-                        scales: { y: { beginAtZero: true, max: 100, ticks: { callback: function(value) { return value + '%'; } } } }
-                    }
-                });
-                
-                const ctxTrend = document.getElementById('chartTendance').getContext('2d');
-                if (trendChartInstance) trendChartInstance.destroy();
-                trendChartInstance = new Chart(ctxTrend, {
-                    type: 'line',
-                    data: {
-                        labels: labelsLignes,
-                        datasets: [
-                            {
-                                label: 'Moyenne générale lignes',
-                                data: dataAllLignes,
-                                borderColor: '#d32f2f',
-                                backgroundColor: 'rgba(211,47,47,0.1)',
-                                borderWidth: 3,
-                                pointRadius: 5,
-                                pointBackgroundColor: '#d32f2f',
-                                tension: 0.3,
-                                fill: true
-                            },
-                            {
-                                label: 'Tendance (moyenne mobile 3 périodes)',
-                                data: dataAllLignes.map((_, i, arr) => {
-                                    if (i < 2) return null;
-                                    return (arr[i-2] + arr[i-1] + arr[i]) / 3;
-                                }),
-                                borderColor: '#f59e0b',
-                                borderWidth: 2,
-                                borderDash: [5, 5],
-                                pointRadius: 0,
-                                fill: false
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: true,
-                        plugins: { tooltip: { callbacks: { label: function(context) { return context.dataset.label + ': ' + (context.raw ? context.raw.toFixed(1) + '%' : 'N/A'); } } } },
-                        scales: { y: { beginAtZero: true, max: 100, ticks: { callback: function(value) { return value + '%'; } } } }
-                    }
-                });
-                
-                const rangesLignes = { 'Excellent (85-100)': 0, 'Bon (70-84)': 0, 'Moyen (60-69)': 0, 'Faible (40-59)': 0, 'Critique (0-39)': 0 };
-                allScoresLignes.forEach(score => {
-                    if (score >= 85) rangesLignes['Excellent (85-100)']++;
-                    else if (score >= 70) rangesLignes['Bon (70-84)']++;
-                    else if (score >= 60) rangesLignes['Moyen (60-69)']++;
-                    else if (score >= 40) rangesLignes['Faible (40-59)']++;
-                    else rangesLignes['Critique (0-39)']++;
-                });
-                
-                const ctxDist = document.getElementById('chartDistribution').getContext('2d');
-                if (distributionChartInstance) distributionChartInstance.destroy();
-                distributionChartInstance = new Chart(ctxDist, {
-                    type: 'pie',
-                    data: {
-                        labels: Object.keys(rangesLignes),
-                        datasets: [{
-                            data: Object.values(rangesLignes),
-                            backgroundColor: ['#22c55e', '#84cc16', '#eab308', '#f97316', '#ef4444'],
-                            borderWidth: 0
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: { legend: { position: 'right' }, tooltip: { callbacks: { label: function(context) { return context.label + ': ' + context.raw + ' audits (' + ((context.raw / allScoresLignes.length) * 100).toFixed(1) + '%)'; } } } }
-                    }
-                });
-                
-                // Courbes pour les bureaux
-                const groupesBureaux = {};
-                const allScoresBureaux = [];
-                
-                filteredAudits.filter(a => a.type === 'bureau').forEach(a => {
-                    if (!a.date) return;
-                    const d = new Date(a.date);
-                    let key;
-                    if (period === 'day') {
-                        key = d.toISOString().split('T')[0];
-                    } else if (period === 'week') {
-                        const weekStart = new Date(d);
-                        weekStart.setDate(d.getDate() - d.getDay());
-                        key = weekStart.toISOString().split('T')[0];
-                    } else {
-                        key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
-                    }
-                    
-                    if (!groupesBureaux[key]) {
-                        groupesBureaux[key] = [];
-                    }
-                    groupesBureaux[key].push(a.resultat);
-                    allScoresBureaux.push(a.resultat);
-                });
-                
-                const labelsBureaux = Object.keys(groupesBureaux).sort();
-                const dataBureaux = labelsBureaux.map(l => moyenne(groupesBureaux[l]));
-                
-                const ctxBureaux = document.getElementById('chartBureaux').getContext('2d');
-                if (chartBureauxInstance) chartBureauxInstance.destroy();
-                chartBureauxInstance = new Chart(ctxBureaux, {
-                    type: 'line',
-                    data: {
-                        labels: labelsBureaux,
-                        datasets: [
-                            { 
-                                label: 'Moyenne bureaux', 
-                                data: dataBureaux, 
-                                borderColor: '#10b981', 
-                                backgroundColor: 'rgba(16,185,129,0.1)', 
-                                tension: 0.4,
-                                borderWidth: 3,
-                                pointBackgroundColor: '#10b981',
-                                pointRadius: 4,
-                                fill: true
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: true,
-                        plugins: { 
-                            legend: { position: 'top' },
-                            tooltip: { callbacks: { label: function(context) { return context.dataset.label + ': ' + context.raw.toFixed(1) + '%'; } } }
-                        },
-                        scales: { y: { beginAtZero: true, max: 100, ticks: { callback: function(value) { return value + '%'; } } } }
-                    }
-                });
-                
-                const ctxTrendBureaux = document.getElementById('chartTendanceBureaux').getContext('2d');
-                if (trendChartBureauxInstance) trendChartBureauxInstance.destroy();
-                trendChartBureauxInstance = new Chart(ctxTrendBureaux, {
-                    type: 'line',
-                    data: {
-                        labels: labelsBureaux,
-                        datasets: [
-                            {
-                                label: 'Moyenne bureaux',
-                                data: dataBureaux,
-                                borderColor: '#d32f2f',
-                                backgroundColor: 'rgba(211,47,47,0.1)',
-                                borderWidth: 3,
-                                pointRadius: 5,
-                                pointBackgroundColor: '#d32f2f',
-                                tension: 0.3,
-                                fill: true
-                            },
-                            {
-                                label: 'Tendance (moyenne mobile 3 périodes)',
-                                data: dataBureaux.map((_, i, arr) => {
-                                    if (i < 2) return null;
-                                    return (arr[i-2] + arr[i-1] + arr[i]) / 3;
-                                }),
-                                borderColor: '#f59e0b',
-                                borderWidth: 2,
-                                borderDash: [5, 5],
-                                pointRadius: 0,
-                                fill: false
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: true,
-                        plugins: { tooltip: { callbacks: { label: function(context) { return context.dataset.label + ': ' + (context.raw ? context.raw.toFixed(1) + '%' : 'N/A'); } } } },
-                        scales: { y: { beginAtZero: true, max: 100, ticks: { callback: function(value) { return value + '%'; } } } }
-                    }
-                });
-                
-                const rangesBureaux = { 'Excellent (85-100)': 0, 'Bon (70-84)': 0, 'Moyen (60-69)': 0, 'Faible (40-59)': 0, 'Critique (0-39)': 0 };
-                allScoresBureaux.forEach(score => {
-                    if (score >= 85) rangesBureaux['Excellent (85-100)']++;
-                    else if (score >= 70) rangesBureaux['Bon (70-84)']++;
-                    else if (score >= 60) rangesBureaux['Moyen (60-69)']++;
-                    else if (score >= 40) rangesBureaux['Faible (40-59)']++;
-                    else rangesBureaux['Critique (0-39)']++;
-                });
-                
-                const ctxDistBureaux = document.getElementById('chartDistributionBureaux').getContext('2d');
-                if (distributionChartBureauxInstance) distributionChartBureauxInstance.destroy();
-                distributionChartBureauxInstance = new Chart(ctxDistBureaux, {
-                    type: 'pie',
-                    data: {
-                        labels: Object.keys(rangesBureaux),
-                        datasets: [{
-                            data: Object.values(rangesBureaux),
-                            backgroundColor: ['#22c55e', '#84cc16', '#eab308', '#f97316', '#ef4444'],
-                            borderWidth: 0
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: { legend: { position: 'right' }, tooltip: { callbacks: { label: function(context) { return context.label + ': ' + context.raw + ' audits (' + ((context.raw / allScoresBureaux.length) * 100).toFixed(1) + '%)'; } } } }
-                    }
-                });
-                
-                updateBarChart(filteredAudits);
-                updateBarChartBureaux(filteredAudits);
-                updateLignesTable(filteredAudits);
-                updateBureauxTable(filteredAudits);
-            }
-            
-            function updateTrendStats(audits) {
-                const ligneAudits = audits.filter(a => a.type === 'ligne');
-                const bureauAudits = audits.filter(a => a.type === 'bureau');
-                
-                const moyLignes = moyenne(ligneAudits.map(a => a.resultat));
-                const moyBureaux = moyenne(bureauAudits.map(a => a.resultat));
-                
-                document.getElementById('trendStats').innerHTML = `
-                    <div class="trend-card">
-                        <i class="fas fa-industry"></i>
-                        <div>Moyenne lignes</div>
-                        <div class="trend-value ${getScoreColorClass(moyLignes)}">${moyLignes.toFixed(1)}%</div>
-                    </div>
-                    <div class="trend-card">
-                        <i class="fas fa-building"></i>
-                        <div>Moyenne bureaux</div>
-                        <div class="trend-value ${getScoreColorClass(moyBureaux)}">${moyBureaux.toFixed(1)}%</div>
-                    </div>
-                    <div class="trend-card">
-                        <i class="fas fa-chart-line"></i>
-                        <div>Total audits lignes</div>
-                        <div class="trend-value">${ligneAudits.length}</div>
-                    </div>
-                    <div class="trend-card">
-                        <i class="fas fa-chart-line"></i>
-                        <div>Total audits bureaux</div>
-                        <div class="trend-value">${bureauAudits.length}</div>
-                    </div>
-                `;
-            }
-
-            function updateBarChart(audits) {
-                const ligneLastScore = new Map();
-                audits.filter(a => a.type === 'ligne' && a.secteur).forEach(a => {
-                    const current = ligneLastScore.get(a.secteur);
-                    if (!current || new Date(a.date) > new Date(current.date)) {
-                        ligneLastScore.set(a.secteur, { score: a.resultat, date: a.date, uap: a.uap });
-                    }
-                });
-                
-                const labels = Array.from(ligneLastScore.keys());
-                const scores = labels.map(l => ligneLastScore.get(l).score);
-                const colors = scores.map(s => s >= 85 ? '#22c55e' : (s >= 60 ? '#eab308' : '#ef4444'));
-                
-                const ctx = document.getElementById('chartBarresLignes').getContext('2d');
-                if (barChartInstance) barChartInstance.destroy();
-                barChartInstance = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Dernier score (%)',
-                            data: scores,
-                            backgroundColor: colors,
-                            borderRadius: 8,
-                            borderWidth: 0,
-                            barPercentage: 0.7
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: true,
-                        scales: {
-                            y: { min: 0, max: 100, ticks: { callback: v => v + '%' } },
-                            x: { ticks: { maxRotation: 45, minRotation: 45 } }
-                        },
-                        plugins: { tooltip: { callbacks: { label: ctx => `${ctx.raw}%` } } }
-                    }
-                });
-            }
-            
-            function updateBarChartBureaux(audits) {
-                const bureauLastScore = new Map();
-                audits.filter(a => a.type === 'bureau' && a.secteur).forEach(a => {
-                    const current = bureauLastScore.get(a.secteur);
-                    if (!current || new Date(a.date) > new Date(current.date)) {
-                        bureauLastScore.set(a.secteur, { score: a.resultat, date: a.date });
-                    }
-                });
-                
-                const labels = Array.from(bureauLastScore.keys());
-                const scores = labels.map(l => bureauLastScore.get(l).score);
-                const colors = scores.map(s => s >= 85 ? '#22c55e' : (s >= 60 ? '#eab308' : '#ef4444'));
-                
-                const ctx = document.getElementById('chartBarresBureaux').getContext('2d');
-                if (barChartBureauxInstance) barChartBureauxInstance.destroy();
-                barChartBureauxInstance = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Dernier score (%)',
-                            data: scores,
-                            backgroundColor: colors,
-                            borderRadius: 8,
-                            borderWidth: 0,
-                            barPercentage: 0.7
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: true,
-                        scales: {
-                            y: { min: 0, max: 100, ticks: { callback: v => v + '%' } },
-                            x: { ticks: { maxRotation: 45, minRotation: 45 } }
-                        },
-                        plugins: { tooltip: { callbacks: { label: ctx => `${ctx.raw}%` } } }
-                    }
-                });
-            }
-
-            function updateLignesTable(audits) {
-                const lignesData = new Map();
-                audits.filter(a => a.type === 'ligne' && a.secteur).forEach(a => {
-                    if (!lignesData.has(a.secteur)) lignesData.set(a.secteur, []);
-                    lignesData.get(a.secteur).push({ resultat: a.resultat, date: a.date, uap: a.uap });
-                });
-                
-                let tbody = '';
-                for (let [ligne, values] of lignesData.entries()) {
-                    const sorted = values.sort((a, b) => new Date(b.date) - new Date(a.date));
-                    const moy = moyenne(sorted.map(v => v.resultat));
-                    const dernier = sorted[0];
-                    const avantDernier = sorted[1];
-                    let evolution = '-';
-                    let evolutionColor = '#64748b';
-                    if (avantDernier) {
-                        const diff = dernier.resultat - avantDernier.resultat;
-                        if (diff > 0) { evolution = `+${diff}%`; evolutionColor = '#22c55e'; }
-                        else if (diff < 0) { evolution = `${diff}%`; evolutionColor = '#ef4444'; }
-                        else evolution = '0%';
-                    }
-                    const perfClass = getPerformanceClass(moy);
-                    const uapIcon = dernier.uap === 'UAP1' ? '<span style="color:#3b82f6">🔵 UAP1</span>' : '<span style="color:#8b5cf6">🟣 UAP2</span>';
-                    tbody += `
-                        <tr>
-                            <td><strong>${ligne}</strong></td>
-                            <td>${uapIcon}</td>
-                            <td><span class="badge ${perfClass}">${moy.toFixed(1)}%</span></td>
-                            <td class="${getScoreColorClass(dernier.resultat)}">${dernier.resultat}%</td>
-                            <td style="color: ${evolutionColor}; font-weight: 600;">${evolution}</td>
-                            <td><span class="badge ${getPerformanceClass(dernier.resultat)}">${getPerformanceLabel(dernier.resultat)}</span></td>
-                        </tr>
-                    `;
-                }
-                document.querySelector('#resultatsLignes tbody').innerHTML = tbody || '<tr><td colspan="6" style="text-align:center">Aucune donnée disponible</td></tr>';
-            }
-            
-            function updateBureauxTable(audits) {
-                const bureauxData = new Map();
-                audits.filter(a => a.type === 'bureau' && a.secteur).forEach(a => {
-                    if (!bureauxData.has(a.secteur)) bureauxData.set(a.secteur, []);
-                    bureauxData.get(a.secteur).push({ resultat: a.resultat, date: a.date });
-                });
-                
-                let tbody = '';
-                for (let [service, values] of bureauxData.entries()) {
-                    const sorted = values.sort((a, b) => new Date(b.date) - new Date(a.date));
-                    const moy = moyenne(sorted.map(v => v.resultat));
-                    const dernier = sorted[0];
-                    const avantDernier = sorted[1];
-                    let evolution = '-';
-                    let evolutionColor = '#64748b';
-                    if (avantDernier) {
-                        const diff = dernier.resultat - avantDernier.resultat;
-                        if (diff > 0) { evolution = `+${diff}%`; evolutionColor = '#22c55e'; }
-                        else if (diff < 0) { evolution = `${diff}%`; evolutionColor = '#ef4444'; }
-                        else evolution = '0%';
-                    }
-                    const perfClass = getPerformanceClass(moy);
-                    tbody += `
-                        <tr>
-                            <td><strong>${service}</strong></td>
-                            <td><span class="badge ${perfClass}">${moy.toFixed(1)}%</span></td>
-                            <td class="${getScoreColorClass(dernier.resultat)}">${dernier.resultat}%</td>
-                            <td style="color: ${evolutionColor}; font-weight: 600;">${evolution}</td>
-                            <td><span class="badge ${getPerformanceClass(dernier.resultat)}">${getPerformanceLabel(dernier.resultat)}</span></td>
-                        </tr>
-                    `;
-                }
-                document.querySelector('#resultatsBureaux tbody').innerHTML = tbody || '<tr><td colspan="5" style="text-align:center">Aucune donnée disponible</td></tr>';
-            }
-
-            function updateDetails(audits) {
-                const sorted = [...audits].sort((a, b) => new Date(b.date) - new Date(a.date));
-                let tbody = '';
-                sorted.forEach(a => {
-                    const date = a.date ? new Date(a.date).toLocaleDateString('fr-FR') : '';
-                    const type = a.type === 'ligne' ? 'Ligne' : 'Bureau';
-                    const secteur = a.secteur || '-';
-                    const uap = a.uap || '-';
-                    const perfClass = getPerformanceClass(a.resultat);
-                    tbody += `
-                        <tr>
-                            <td>${date}</td>
-                            <td>${type}</td>
-                            <td>${secteur}</td>
-                            <td>${uap}</td>
-                            <td class="${getScoreColorClass(a.resultat)}">${a.resultat}%</td>
-                            <td><span class="badge ${perfClass}">${getPerformanceLabel(a.resultat)}</span></td>
-                        </tr>
-                    `;
-                });
-                document.querySelector('#auditsTable tbody').innerHTML = tbody || '<tr><td colspan="6" style="text-align:center">Aucun audit enregistré</td></tr>';
-            }
-
-            function exportToExcel(type) {
-                let data = [];
-                if (type === 'details') {
-                    data = allAudits.map(a => ({
-                        'Date': a.date ? new Date(a.date).toLocaleDateString('fr-FR') : '',
-                        'Type': a.type === 'ligne' ? 'Ligne' : 'Bureau',
-                        'Secteur': a.secteur || '',
-                        'UAP': a.uap || '',
-                        'Résultat (%)': a.resultat,
-                        'Performance': getPerformanceLabel(a.resultat)
-                    }));
-                } else if (type === 'courbes') {
-                    const filtered = filterAuditsByFilters(allAudits);
-                    data = filtered.map(a => ({
-                        'Date': a.date ? new Date(a.date).toLocaleDateString('fr-FR') : '',
-                        'Type': a.type === 'ligne' ? 'Ligne' : 'Bureau',
-                        'Secteur': a.secteur || '',
-                        'UAP': a.uap || '',
-                        'Résultat (%)': a.resultat,
-                        'Performance': getPerformanceLabel(a.resultat)
-                    }));
-                }
-                
-                const ws = XLSX.utils.json_to_sheet(data);
-                const wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, 'Audits 5S');
-                XLSX.writeFile(wb, `Audit5S_${type}_${new Date().toISOString().split('T')[0]}.xlsx`);
+                const sel = document.getElementById('filterLigne');
+                if (sel) { const cur = sel.value; sel.innerHTML = '<option value="">Toutes</option>'; lignes.sort().forEach(l => sel.innerHTML += `<option value="${l}">${l}</option>`); if (cur && lignes.includes(cur)) sel.value = cur; }
             }
 
             function loadAllData() {
-                const auditsRef = db.ref('audits');
-                auditsRef.on('value', (snapshot) => {
+                db.ref('audits').on('value', (snapshot) => {
                     const data = snapshot.val();
                     allAudits = [];
-                    for (let key in data) {
-                        allAudits.push({ id: key, ...data[key] });
-                    }
+                    for (let key in data) allAudits.push({ id: key, ...data[key] });
                     updateDashboard(allAudits);
-                    updateCourbes(allAudits);
+                    updateAllCharts(allAudits);
                     updateDetails(allAudits);
                     updateLigneFilterOptions(allAudits);
-                }, (error) => {
-                    console.error('Erreur de lecture RTDB:', error);
                 });
             }
 
-            document.getElementById('submitLigne').addEventListener('click', async () => {
-                const date = document.getElementById('ligneDate').value;
-                const uap = document.getElementById('ligneUap').value;
-                const ligne = document.getElementById('ligneNom').value.trim();
-                const resultat = parseInt(document.getElementById('ligneResultat').value);
-                
-                if (!date || !uap || !ligne || isNaN(resultat)) {
-                    alert('Veuillez remplir tous les champs');
-                    return;
-                }
-                
-                try {
-                    const newAudit = {
-                        type: 'ligne',
-                        date: date,
-                        uap: uap,
-                        secteur: ligne,
-                        resultat: resultat,
-                        timestamp: firebase.database.ServerValue.TIMESTAMP
-                    };
-                    await db.ref('audits').push(newAudit);
-                    
-                    const btn = document.getElementById('submitLigne');
-                    btn.innerHTML = '<i class="fas fa-check"></i> Audit enregistré !';
-                    btn.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
-                    
-                    setTimeout(() => {
-                        btn.innerHTML = '<i class="fas fa-save"></i> Enregistrer l\'audit';
-                        btn.style.background = 'linear-gradient(135deg, #d32f2f, #b71c1c)';
-                    }, 2000);
-                    
-                    document.getElementById('ligneDate').value = '';
-                    document.getElementById('ligneUap').value = '';
-                    document.getElementById('ligneNom').value = '';
-                    document.getElementById('ligneResultat').value = 50;
-                    ligneRange.dispatchEvent(new Event('input'));
-                    
-                } catch (error) {
-                    alert('Erreur: ' + error.message);
-                }
-            });
-
-            document.getElementById('submitBureau').addEventListener('click', async () => {
-                const date = document.getElementById('bureauDate').value;
-                const service = document.getElementById('bureauService').value.trim();
-                const resultat = parseInt(document.getElementById('bureauResultat').value);
-                
-                if (!date || !service || isNaN(resultat)) {
-                    alert('Veuillez remplir tous les champs');
-                    return;
-                }
-                
-                try {
-                    const newAudit = {
-                        type: 'bureau',
-                        date: date,
-                        secteur: service,
-                        resultat: resultat,
-                        timestamp: firebase.database.ServerValue.TIMESTAMP
-                    };
-                    await db.ref('audits').push(newAudit);
-                    
-                    const btn = document.getElementById('submitBureau');
-                    btn.innerHTML = '<i class="fas fa-check"></i> Audit enregistré !';
-                    btn.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
-                    
-                    setTimeout(() => {
-                        btn.innerHTML = '<i class="fas fa-save"></i> Enregistrer l\'audit';
-                        btn.style.background = 'linear-gradient(135deg, #d32f2f, #b71c1c)';
-                    }, 2000);
-                    
-                    document.getElementById('bureauDate').value = '';
-                    document.getElementById('bureauService').value = '';
-                    document.getElementById('bureauResultat').value = 50;
-                    bureauRange.dispatchEvent(new Event('input'));
-                    
-                } catch (error) {
-                    alert('Erreur: ' + error.message);
-                }
-            });
-
-            document.getElementById('applyFilters').addEventListener('click', () => {
-                updateCourbes(allAudits);
-                updateDetails(allAudits);
-            });
-            
-            document.getElementById('resetFilters').addEventListener('click', () => {
-                document.getElementById('filterPeriod').value = 'month';
-                document.getElementById('filterWeek').value = '';
-                document.getElementById('filterDate').value = '';
-                document.getElementById('filterUap').value = '';
-                document.getElementById('filterLigne').value = '';
-                updateCourbes(allAudits);
-                updateDetails(allAudits);
-            });
-            
-            document.getElementById('exportDetailsBtn').addEventListener('click', () => exportToExcel('details'));
-            document.getElementById('exportCourbesBtn').addEventListener('click', () => exportToExcel('courbes'));
+            document.getElementById('applyFilters').addEventListener('click', () => { updateAllCharts(allAudits); updateDetails(allAudits); });
+            document.getElementById('resetFilters').addEventListener('click', () => { document.getElementById('filterPeriod').value = 'month'; document.getElementById('filterWeek').value = ''; document.getElementById('filterDate').value = ''; document.getElementById('filterUap').value = ''; document.getElementById('filterLigne').value = ''; updateAllCharts(allAudits); updateDetails(allAudits); });
+            document.getElementById('exportDetailsBtn').addEventListener('click', () => { const data = allAudits.map(a => ({'Date': a.date ? new Date(a.date).toLocaleDateString('fr-FR') : '', 'Type': a.type === 'ligne' ? 'Ligne' : 'Bureau', 'Secteur': a.secteur || '', 'UAP': a.uap || '', 'Résultat (%)': a.resultat, 'Performance': getPerformanceLabel(a.resultat)})); const ws = XLSX.utils.json_to_sheet(data); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'Audits'); XLSX.writeFile(wb, `Audit5S_${new Date().toISOString().split('T')[0]}.xlsx`); });
+            document.getElementById('exportCourbesBtn').addEventListener('click', () => { const data = allAudits.map(a => ({'Date': a.date ? new Date(a.date).toLocaleDateString('fr-FR') : '', 'Type': a.type === 'ligne' ? 'Ligne' : 'Bureau', 'Secteur': a.secteur || '', 'UAP': a.uap || '', 'Résultat (%)': a.resultat, 'Performance': getPerformanceLabel(a.resultat)})); const ws = XLSX.utils.json_to_sheet(data); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'Audits'); XLSX.writeFile(wb, `Audit5S_${new Date().toISOString().split('T')[0]}.xlsx`); });
         });
     </script>
 </body>
