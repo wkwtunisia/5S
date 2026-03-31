@@ -814,6 +814,84 @@
             color: #ef4444;
         }
 
+        /* MODAL PASSWORD */
+        .password-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .password-modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 35px;
+            border-radius: 24px;
+            width: 400px;
+            text-align: center;
+            animation: slideUp 0.3s ease-out;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content i {
+            font-size: 3rem;
+            color: #d32f2f;
+            margin-bottom: 15px;
+        }
+
+        .modal-content h3 {
+            color: #1e293b;
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+        }
+
+        .modal-content p {
+            color: #64748b;
+            margin-bottom: 20px;
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+
+        .modal-content input:focus {
+            border-color: #d32f2f;
+            outline: none;
+        }
+
+        .modal-content button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #d32f2f, #b71c1c);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .modal-error {
+            color: #dc2626;
+            font-size: 0.85rem;
+            margin-top: 10px;
+        }
+
         @media (max-width: 900px) {
             .charts-row {
                 grid-template-columns: 1fr;
@@ -889,6 +967,25 @@
 </head>
 <body>
     <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+
+    <!-- MODAL PASSWORD -->
+    <div id="passwordModal" class="password-modal">
+        <div class="modal-content">
+            <i class="fas fa-lock"></i>
+            <h3>Accès sécurisé</h3>
+            <p>Veuillez saisir le mot de passe administrateur pour accéder à cette section</p>
+            <input type="password" id="modalPassword" placeholder="Mot de passe">
+            <button id="modalSubmitBtn">
+                <i class="fas fa-check"></i>
+                Valider
+            </button>
+            <button id="modalCancelBtn" style="background: linear-gradient(135deg, #64748b, #475569); margin-top: 10px;">
+                <i class="fas fa-times"></i>
+                Annuler
+            </button>
+            <div id="modalError" class="modal-error"></div>
+        </div>
+    </div>
 
     <div id="loginPage">
         <div class="login-container">
@@ -1258,6 +1355,16 @@
             const menuToggle = document.getElementById('menuToggle');
             const sidebar = document.getElementById('sidebar');
             const mainContent = document.getElementById('mainContent');
+            
+            // MODAL ELEMENTS
+            const passwordModal = document.getElementById('passwordModal');
+            const modalPassword = document.getElementById('modalPassword');
+            const modalSubmitBtn = document.getElementById('modalSubmitBtn');
+            const modalCancelBtn = document.getElementById('modalCancelBtn');
+            const modalError = document.getElementById('modalError');
+            
+            let pendingSection = null;
+            const ADMIN_PASSWORD = "kpiadmin";
 
             let allAudits = [];
             let chartInstance = null;
@@ -1281,6 +1388,41 @@
                 sidebar.classList.toggle('open');
                 sidebar.classList.toggle('closed');
                 mainContent.classList.toggle('expanded');
+            });
+
+            // Password modal functions
+            function showPasswordModal(sectionId) {
+                pendingSection = sectionId;
+                modalPassword.value = '';
+                modalError.textContent = '';
+                passwordModal.classList.add('active');
+            }
+            
+            function hidePasswordModal() {
+                passwordModal.classList.remove('active');
+                pendingSection = null;
+                modalPassword.value = '';
+            }
+            
+            function checkPasswordAndNavigate() {
+                const enteredPassword = modalPassword.value;
+                if (enteredPassword === ADMIN_PASSWORD) {
+                    hidePasswordModal();
+                    if (pendingSection) {
+                        setActiveMenu(pendingSection);
+                    }
+                } else {
+                    modalError.textContent = '❌ Mot de passe incorrect';
+                }
+            }
+
+            modalSubmitBtn.addEventListener('click', checkPasswordAndNavigate);
+            modalCancelBtn.addEventListener('click', hidePasswordModal);
+            
+            modalPassword.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    checkPasswordAndNavigate();
+                }
             });
 
             const ligneRange = document.getElementById('ligneResultat');
@@ -1351,10 +1493,11 @@
                 closeSidebarOnMobile();
             }
 
+            // Menu clicks with password protection
             menuItems.dashboard.addEventListener('click', () => setActiveMenu('dashboard'));
             menuItems.courbes.addEventListener('click', () => setActiveMenu('courbes'));
-            menuItems.auditLigne.addEventListener('click', () => setActiveMenu('auditLigne'));
-            menuItems.auditBureau.addEventListener('click', () => setActiveMenu('auditBureau'));
+            menuItems.auditLigne.addEventListener('click', () => showPasswordModal('auditLigne'));
+            menuItems.auditBureau.addEventListener('click', () => showPasswordModal('auditBureau'));
             menuItems.details.addEventListener('click', () => setActiveMenu('details'));
             document.getElementById('menu-deconnexion').addEventListener('click', () => auth.signOut());
 
@@ -1461,7 +1604,6 @@
                 const ligneAudits = audits.filter(a => a.type === 'ligne');
                 const bureauAudits = audits.filter(a => a.type === 'bureau');
 
-                // Meilleurs et pires scores pour les lignes
                 let bestLigne = { score: -1, secteur: '' };
                 let worstLigne = { score: 101, secteur: '' };
                 ligneAudits.forEach(a => {
@@ -1469,7 +1611,6 @@
                     if (a.resultat < worstLigne.score) worstLigne = { score: a.resultat, secteur: a.secteur };
                 });
 
-                // Meilleurs et pires scores pour les bureaux
                 let bestBureau = { score: -1, secteur: '' };
                 let worstBureau = { score: 101, secteur: '' };
                 bureauAudits.forEach(a => {
@@ -1534,7 +1675,6 @@
                     </div>
                 `;
 
-                // Nouvelle section Meilleurs et Pires Scores
                 document.getElementById('bestWorstScores').innerHTML = `
                     <div class="moyenne-item" style="background: linear-gradient(135deg, #fef9c3, #fef3c7);">
                         <strong><i class="fas fa-trophy" style="color: #f59e0b;"></i> Meilleur score Ligne</strong>
@@ -1565,7 +1705,6 @@
                 
                 updateTrendStats(audits);
                 
-                // Courbes pour les lignes
                 const groupesLignes = {};
                 const allScoresLignes = [];
                 
@@ -1709,7 +1848,6 @@
                     }
                 });
                 
-                // Courbes pour les bureaux
                 const groupesBureaux = {};
                 const allScoresBureaux = [];
                 
@@ -1978,8 +2116,8 @@
                     tbody += `
                         <tr>
                             <td><strong>${ligne}</strong></td>
-                            <td>${uapIcon}</td>
-                            <td><span class="badge ${perfClass}">${moy.toFixed(1)}%</span></td>
+                            <td>${uapIcon}</span></td>
+                            <td><span class="badge ${perfClass}">${moy.toFixed(1)}%</span></span></td>
                             <td class="${getScoreColorClass(dernier.resultat)}">${dernier.resultat}%</td>
                             <td style="color: ${evolutionColor}; font-weight: 600;">${evolution}</td>
                             <td><span class="badge ${getPerformanceClass(dernier.resultat)}">${getPerformanceLabel(dernier.resultat)}</span></td>
@@ -2014,7 +2152,7 @@
                     tbody += `
                         <tr>
                             <td><strong>${service}</strong></td>
-                            <td><span class="badge ${perfClass}">${moy.toFixed(1)}%</span></td>
+                            <td><span class="badge ${perfClass}">${moy.toFixed(1)}%</span></span></td>
                             <td class="${getScoreColorClass(dernier.resultat)}">${dernier.resultat}%</td>
                             <td style="color: ${evolutionColor}; font-weight: 600;">${evolution}</td>
                             <td><span class="badge ${getPerformanceClass(dernier.resultat)}">${getPerformanceLabel(dernier.resultat)}</span></td>
